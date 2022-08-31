@@ -1,3 +1,3 @@
 ## 0.0.1
 
-* TODO: Describe initial release.
+Easy to use open source UI library with Widgets to build flutter app.
