@@ -1,7 +1,7 @@
 name: hmwidget
-description: A new Flutter package project.
+description: Easy to use open source UI library with Widgets to build flutter app.
 version: 0.0.1
-homepage: https://github.com/gratien-humaapi/hmwidget
+repository: https://github.com/gratien-humaapi/hmwidget
 
 environment:
   sdk: ">=2.17.1 <3.0.0"
