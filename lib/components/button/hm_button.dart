@@ -15,14 +15,14 @@ class HMButton extends HookWidget {
     this.textColor,
     this.radius = HMRadius.sm,
     this.size = HMButtonSize.md,
-    this.fullWidth,
+    this.fullWidth = false,
     this.buttonVariant,
     this.icon,
     this.iconAtLeft,
     required this.onPressed,
     this.disabled = false,
     this.hidden = false,
-  }) : assert(icon != null && iconAtLeft != null);
+  }) : assert(icon == null && iconAtLeft == null);
   final bool disabled;
   final bool hidden;
   final String content;
@@ -30,7 +30,7 @@ class HMButton extends HookWidget {
   final Color? textColor;
   final HMRadius radius;
   final HMButtonSize size;
-  final bool? fullWidth;
+  final bool fullWidth;
   final HMButtonVariant? buttonVariant;
   final IconData? icon;
   final bool? iconAtLeft;
@@ -44,7 +44,7 @@ class HMButton extends HookWidget {
     return child
         .padding(horizontal: 2.0)
         .constrained(
-            maxWidth: fullWidth! ? double.infinity : (size.value * 1.0) + 10,
+            maxWidth: fullWidth ? double.infinity : (size.value * 1.0) + 10,
             maxHeight: getRatio(size.value))
         .decorated(
           color: disabled

@@ -37,6 +37,7 @@ class MyHomePage extends StatelessWidget {
           buttonVariant: HMButtonVariant.outlined,
           content: 'Press',
           textColor: Colors.blue,
+          radius: HMRadius.md,
         ),
       ),
     );
