@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hmwidget/size/hm_checkbox_size.dart';
+import 'package:hmwidget/utils/constant.dart';
+import 'package:hmwidget/utils/helper.dart';
 import 'package:hmwidget/utils/hm_raduis.dart';
 import 'package:styled_widget/styled_widget.dart';
 
@@ -46,7 +48,7 @@ class HMCheckBox extends HookWidget {
             color: disabled
                 ? const Color.fromRGBO(228, 229, 230, 1)
                 : isChecked.value
-                    ? color
+                    ? color ?? defaultColor
                     : Colors.transparent,
             borderRadius: BorderRadius.circular(radius.value),
             border: isChecked.value
@@ -64,7 +66,7 @@ class HMCheckBox extends HookWidget {
               isChecked.value ? Icons.check : null,
               color: disabled
                   ? const Color.fromRGBO(175, 177, 179, 1)
-                  : Colors.white,
+                  : checkColor(color ?? defaultColor),
               size: size.value / 1.3,
             ),
           )),

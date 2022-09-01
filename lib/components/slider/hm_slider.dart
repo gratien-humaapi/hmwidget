@@ -32,7 +32,7 @@ class HMSlider extends HookWidget {
   }) : super(key: key);
   final bool disabled;
   final bool hidden;
-  final List? marks;
+  final List<HMSliderMark>? marks;
   final HMOrientation orientation;
   final SliderType? sliderType;
   final int? value;
@@ -123,7 +123,7 @@ class HMSlider extends HookWidget {
     double maxValue = max ?? 100;
     return Container(
       height: size.value + 5,
-      margin: const EdgeInsets.symmetric(horizontal: 20),
+      margin: const EdgeInsets.symmetric(horizontal: 10),
       child: SliderTheme(
         data: sliderThemeData,
         child: Slider(
@@ -145,14 +145,14 @@ class HMSlider extends HookWidget {
 
   Widget getSliderWithMark(List marks, ValueNotifier<int> sValue,
       SliderThemeData sliderThemeData, TextStyle textStyle) {
-    final List a = marks.map((e) => e["value"]).toList();
+    final List a = marks.map((e) => e.value).toList();
     final sliderVal =
         useState(a.contains(sValue.value) ? a.indexOf(sValue.value) : 0);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: SliderTheme(
             data: sliderThemeData,
             child: Slider(
@@ -160,7 +160,7 @@ class HMSlider extends HookWidget {
               max: marks.length - 1.0,
               value: sliderVal.value.toDouble(),
               divisions: marks.length - 1,
-              label: "${marks[sliderVal.value]["label"]}",
+              label: "${marks[sliderVal.value].label}",
               onChanged: (value) {
                 sliderVal.value = value.toInt();
               },
@@ -174,18 +174,18 @@ class HMSlider extends HookWidget {
             ? const SizedBox(height: 6)
             : Container(),
         Container(
-          margin: const EdgeInsets.only(left: 20, right: 10),
+          margin: const EdgeInsets.only(left: 5, right: 5),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: marks.map((e) {
               return Transform.rotate(
                 angle:
-                    orientation == HMOrientation.horizontal ? 0 : -math.pi / -2,
+                    orientation == HMOrientation.horizontal ? 0 : math.pi / 2,
                 child: Container(
                     // color: Colors.amber,
-                    width: 50,
+                    width: 40,
                     child: Text(
-                      "${e["label"]}",
+                      "${e.label}",
                       textAlign: TextAlign.center,
                       style: textStyle,
                     )),

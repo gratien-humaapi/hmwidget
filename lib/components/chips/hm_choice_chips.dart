@@ -19,9 +19,8 @@ class HMChoiceChips extends HookWidget {
       this.borderSide,
       this.textColor,
       this.backgroundColor,
-      this.showCheckmark = true,
       this.spacing = 10,
-      this.onSelected,
+      required this.onSelected,
       Key? key})
       : super(key: key);
 
@@ -30,7 +29,6 @@ class HMChoiceChips extends HookWidget {
   final double radius;
   final Widget? avatar;
   final Widget label;
-  final bool showCheckmark;
   final double spacing;
   final double scale;
   final bool isFilled;
@@ -38,7 +36,7 @@ class HMChoiceChips extends HookWidget {
   final Color? backgroundColor;
   final Color? selectedColor;
   final Color? textColor;
-  final void Function(dynamic value)? onSelected;
+  final void Function(bool value) onSelected;
 
   Widget _styledBox({
     required Widget child,
@@ -54,12 +52,17 @@ class HMChoiceChips extends HookWidget {
         backgroundColor: disabled
             ? outlineColor.withOpacity(0.3)
             : isFilled
-                ? backgroundColor
+                ? backgroundColor ?? defaultColor
                 : Colors.grey[100],
-        selectedColor: isFilled ? selectedColor : Colors.grey[100],
+        selectedColor: isFilled
+            ? selectedColor ??
+                Color.alphaBlend(Colors.black.withOpacity(0.3),
+                    backgroundColor ?? defaultColor)
+            : Colors.grey[100],
         side: BorderSide(
             width: 1,
-            color: selected.value ? selectedColor! : outlineColor,
+            color:
+                selected.value ? selectedColor ?? defaultColor : outlineColor,
             style: isFilled ? BorderStyle.none : BorderStyle.solid),
         elevation: 0.0,
         pressElevation: 0.0,
@@ -67,7 +70,7 @@ class HMChoiceChips extends HookWidget {
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
         onSelected: (bool value) {
           selected.value = value;
-          onSelected!(value);
+          onSelected(value);
         });
   }
 

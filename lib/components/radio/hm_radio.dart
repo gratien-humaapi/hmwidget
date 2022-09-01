@@ -14,7 +14,7 @@ class HMRadio extends HookWidget {
   const HMRadio(
       {this.disabled = false,
       this.hidden = false,
-      this.radioList = const [],
+      required this.radioList,
       this.size = HMRadioSize.md,
       this.value,
       this.isLeft = true,
@@ -26,7 +26,7 @@ class HMRadio extends HookWidget {
       this.selectedIcon = Icons.radio_button_checked,
       this.unSelectedIcon = Icons.circle_outlined,
       this.radioColor = const Color.fromARGB(255, 121, 80, 242),
-      this.onChanged,
+      required this.onChanged,
       this.isToggleable = false,
       Key? key})
       : super(key: key);
@@ -49,7 +49,7 @@ class HMRadio extends HookWidget {
   final IconData selectedIcon;
   final IconData unSelectedIcon;
   final Border? border;
-  final void Function(dynamic value)? onChanged;
+  final void Function(dynamic value) onChanged;
 
   double _getTextSize(HMRadioSize size) {
     switch (size) {
@@ -115,8 +115,8 @@ class HMRadio extends HookWidget {
           onTap: () {
             if (radioList[index] != selection.value) {
               selection.value = radioList[index];
-              print('$index, ${selection.value}');
-              onChanged!(selection.value);
+              // print('$index, ${selection.value}');
+              onChanged(selection.value);
             }
           },
           child: Container(

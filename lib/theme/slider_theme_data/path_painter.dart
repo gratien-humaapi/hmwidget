@@ -113,7 +113,8 @@ class PathPainter {
     if (orientation == HMOrientation.vertical) {
       canvas
         ..rotate(math.pi / 2)
-        ..translate(-center.dy - (center.dy * 0.2), -center.dx + 22);
+        ..translate(-center.dy - labelPainter.height,
+            -center.dx + (_labelPadding * 1.5));
     } else {
       canvas.translate(center.dx, center.dy - _bottomTipYOffset);
     }

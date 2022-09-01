@@ -51,12 +51,17 @@ class HMFilterChips extends HookWidget {
         backgroundColor: disabled
             ? outlineColor.withOpacity(0.3)
             : isFilled
-                ? backgroundColor
+                ? backgroundColor ?? defaultColor
                 : Colors.grey[100],
-        selectedColor: isFilled ? selectedColor : Colors.grey[100],
+        selectedColor: isFilled
+            ? selectedColor ??
+                Color.alphaBlend(Colors.black.withOpacity(0.3),
+                    backgroundColor ?? defaultColor)
+            : Colors.grey[100],
         side: BorderSide(
             width: 1,
-            color: selected.value ? selectedColor! : outlineColor,
+            color:
+                selected.value ? selectedColor ?? defaultColor : outlineColor,
             style: isFilled ? BorderStyle.none : BorderStyle.solid),
         showCheckmark: showCheckmark,
         checkmarkColor: isFilled ? Colors.white : selectedColor,

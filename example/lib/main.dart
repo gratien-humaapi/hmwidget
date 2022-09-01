@@ -21,9 +21,16 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
 
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  bool ischecked = false;
+  RangeValues rangeValues = RangeValues(10, 50);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,14 +38,13 @@ class MyHomePage extends StatelessWidget {
         title: const Text("HmWidget demo"),
         centerTitle: true,
       ),
+      // backgroundColor: Colors.black,
       body: Center(
-        child: HMButton(
-          onPressed: () => print("Pressed"),
-          buttonVariant: HMButtonVariant.outlined,
-          content: 'Press',
-          textColor: Colors.blue,
-          radius: HMRadius.md,
-        ),
+        child: HMTextField(
+            value: "",
+            onChange: (val) {
+              print(val);
+            }),
       ),
     );
   }

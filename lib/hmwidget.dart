@@ -12,8 +12,10 @@ export 'package:hmwidget/components/file_picker/hm_file_picker.dart';
 export 'package:hmwidget/components/iconbutton/hm_iconbutton.dart';
 export 'package:hmwidget/components/radio/hm_radio.dart';
 export 'package:hmwidget/components/select/hm_select.dart';
+export 'package:hmwidget/components/select/hm_multi_select.dart';
 export 'package:hmwidget/components/select/hm_select_bagde.dart';
 export 'package:hmwidget/components/slider/hm_slider.dart';
+export 'package:hmwidget/components/slider/hm_range_slider.dart';
 export 'package:hmwidget/components/switch/hm_switch.dart';
 export 'package:hmwidget/components/textfield/hm_textfield.dart';
 

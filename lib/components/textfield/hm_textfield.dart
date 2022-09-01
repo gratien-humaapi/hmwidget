@@ -14,9 +14,8 @@ class HMTextField extends HookWidget {
     this.disabled = false,
     this.hidden = false,
     this.hintText,
-    this.value = "",
+    this.value,
     this.iconColor,
-    this.label,
     this.maxLength,
     this.textFieldType = HMTextFieldType.text,
     this.textInputAction = TextInputAction.done,
@@ -27,7 +26,6 @@ class HMTextField extends HookWidget {
     this.onChange,
     this.onSubmitted,
     this.onTap,
-    this.description,
     this.prefixIcon,
     this.fillColor,
     this.isRequired = false,
@@ -39,9 +37,7 @@ class HMTextField extends HookWidget {
   final bool disabled;
   final bool hidden;
   final String? hintText;
-  final String value;
-  final String? label;
-  final String? description;
+  final String? value;
   final int? maxLength;
   final bool isRequired;
   final HMTextVariant variant;
@@ -165,16 +161,14 @@ class HMTextField extends HookWidget {
                       hintText: hintText,
                       hintStyle: const TextStyle(color: Colors.grey),
                       contentPadding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 0),
+                          vertical: 8, horizontal: 5),
                       isDense: true,
                     ),
                     onTap: onTap,
                     onChanged: (value) {
                       onChange!(value);
                     },
-                    onSubmitted: (value) {
-                      onSubmitted!(value);
-                    },
+                    onSubmitted: onSubmitted,
                   ),
                 ),
                 suffixIcon != null
@@ -221,7 +215,7 @@ class HMTextField extends HookWidget {
                       hintText: hintText,
                       hintStyle: const TextStyle(color: Colors.grey),
                       contentPadding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 0),
+                          vertical: 8, horizontal: 5),
                       isDense: true,
                     ),
                     onTap: onTap,
@@ -291,7 +285,7 @@ class HMTextField extends HookWidget {
                       hintText: hintText,
                       hintStyle: const TextStyle(color: Colors.grey),
                       contentPadding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 0),
+                          vertical: 8, horizontal: 5),
                       isDense: true,
                       counterText: '',
                     ),
@@ -354,7 +348,7 @@ class HMTextField extends HookWidget {
                       hintText: hintText,
                       hintStyle: const TextStyle(color: Colors.grey),
                       contentPadding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 0),
+                          vertical: 8, horizontal: 5),
                       isDense: true,
                     ),
                     onTap: onTap,

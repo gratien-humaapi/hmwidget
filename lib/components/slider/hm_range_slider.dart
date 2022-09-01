@@ -19,11 +19,8 @@ class HMRangeSlider extends HookWidget {
     this.orientation = HMOrientation.horizontal,
     this.sliderType,
     this.rangeValues,
-    this.value,
-    this.min = 0,
-    this.max = 100,
-    required this.rangeMinValue,
-    required this.rangeMaxValue,
+    this.rangeMinValue = 0,
+    this.rangeMaxValue = 100,
     this.color,
     this.radius = HMRadius.xl,
     this.size = HMSliderSize.md,
@@ -31,13 +28,10 @@ class HMRangeSlider extends HookWidget {
   }) : super(key: key);
   final bool disabled;
   final bool hidden;
-  final List? marks;
+  final List<HMSliderMark>? marks;
   final HMOrientation orientation;
   final SliderType? sliderType;
-  final List<int>? rangeValues;
-  final int? value;
-  final double min;
-  final double max;
+  final RangeValues? rangeValues;
   final double rangeMinValue;
   final double rangeMaxValue;
   final Color? color;
@@ -101,16 +95,16 @@ class HMRangeSlider extends HookWidget {
     TextStyle textStyle = TextStyle(
         color: disabled ? const Color.fromRGBO(177, 178, 179, 1) : Colors.black,
         fontSize: 12);
-    final initialValue = rangeValues ?? [0, 100];
-    final selectedRange = useState(
-        RangeValues(initialValue[0].toDouble(), initialValue[1].toDouble()));
+    final initialValue =
+        rangeValues ?? RangeValues(rangeMinValue, rangeMaxValue);
+    final selectedRange = useState(initialValue);
     return SizedBox(
       child: Transform(
         alignment: FractionalOffset.center,
         // Rotate sliders by 90 degrees
         transform: Matrix4.identity()
           ..rotateZ(
-            -math.pi / 2,
+            orientation == HMOrientation.horizontal ? 0 : -math.pi / 2,
           ),
 
         child: AbsorbPointer(
@@ -162,7 +156,7 @@ class HMRangeSlider extends HookWidget {
       ValueNotifier<RangeValues> rangeValues,
       SliderThemeData sliderThemeData,
       TextStyle textStyle) {
-    final List a = marks.map((e) => e["value"]).toList();
+    final List a = marks.map((e) => e.value).toList();
     final range = useState(RangeValues(
         a.contains(rangeValues.value.start)
             ? a.indexOf(rangeValues.value.start).toDouble()
@@ -182,9 +176,8 @@ class HMRangeSlider extends HookWidget {
               min: 0.0,
               max: marks.length - 1.0,
               divisions: marks.length - 1,
-              labels: RangeLabels(
-                  "${marks[range.value.start.toInt()]["label"]}",
-                  "${marks[range.value.end.toInt()]["label"]}"),
+              labels: RangeLabels("${marks[range.value.start.toInt()].label}",
+                  "${marks[range.value.end.toInt()].label}"),
               onChanged: (newRanges) {
                 range.value = newRanges;
               },
@@ -198,7 +191,7 @@ class HMRangeSlider extends HookWidget {
             ? const SizedBox(height: 6)
             : Container(),
         Container(
-          margin: const EdgeInsets.only(left: 10, right: 5),
+          margin: const EdgeInsets.only(left: 5, right: 5),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: marks.map((e) {
@@ -208,7 +201,7 @@ class HMRangeSlider extends HookWidget {
                 child: SizedBox(
                     width: 40,
                     child: Text(
-                      "${e["label"]}",
+                      "${e.label}",
                       textAlign: TextAlign.center,
                       style: textStyle,
                     )),
