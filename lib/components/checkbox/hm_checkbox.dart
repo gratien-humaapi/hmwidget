@@ -29,7 +29,7 @@ class HMCheckBox extends HookWidget {
   final void Function(bool) onChange;
 
   Widget _styledBox({required Widget child}) =>
-      Visibility(visible: hidden, child: child.padding(horizontal: 4.0));
+      Visibility(visible: !hidden, child: child.padding(horizontal: 4.0));
 
   Widget _styledInnerContent({
     required String? label,

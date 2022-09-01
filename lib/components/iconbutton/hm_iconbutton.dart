@@ -36,7 +36,7 @@ class HMIconButton extends HookWidget {
           required double size,
           required double radius}) =>
       Visibility(
-        visible: hidden,
+        visible: !hidden,
         child: child.constrained(width: size, height: size).decorated(
               color: disabled
                   ? const Color.fromRGBO(228, 229, 230, 1)

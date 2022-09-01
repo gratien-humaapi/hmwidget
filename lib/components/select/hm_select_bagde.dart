@@ -99,7 +99,7 @@ class HMSelectBadges extends HookWidget {
   Widget _styledBox({
     required Widget child,
   }) =>
-      Visibility(visible: true, child: child);
+      Visibility(visible: !hidden, child: child);
 
   Widget _styledSelectPannel({
     required ValueNotifier<dynamic> filters,

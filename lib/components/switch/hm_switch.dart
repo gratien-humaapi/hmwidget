@@ -49,7 +49,7 @@ class HMSwitch extends HookWidget {
     required AnimationController controller,
   }) =>
       Visibility(
-          visible: hidden,
+          visible: !hidden,
           child: Container(
             color: Colors.transparent,
             height: getTrackSize(size),

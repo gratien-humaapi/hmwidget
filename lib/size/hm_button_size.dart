@@ -1,5 +1,7 @@
 //
-
+/**
+ *  The size of HMButton
+ */
 enum HMButtonSize {
   xs(50.0),
   sm(60.0),

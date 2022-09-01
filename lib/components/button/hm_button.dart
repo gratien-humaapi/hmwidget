@@ -7,6 +7,7 @@ import 'package:styled_widget/styled_widget.dart';
 import '../../type/hm_button_type.dart';
 import '../../utils/sizes.dart';
 
+/// child of  type [Widget] is alternative to title key. title will get priority over child
 class HMButton extends HookWidget {
   const HMButton({
     super.key,
