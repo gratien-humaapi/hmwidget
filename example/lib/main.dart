@@ -40,11 +40,12 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       // backgroundColor: Colors.black,
       body: Center(
-        child: HMTextField(
-            value: "",
-            onChange: (val) {
-              print(val);
-            }),
+        child: HMButton(
+          onPressed: () => print("Pressed"),
+          buttonVariant: HMButtonVariant.outlined,
+          content: 'Press',
+          textColor: Colors.blue,
+        ),
       ),
     );
   }
