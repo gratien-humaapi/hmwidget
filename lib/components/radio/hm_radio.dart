@@ -20,21 +20,18 @@ class HMRadio extends HookWidget {
       this.isLeft = true,
       this.boxRadius = 4,
       this.border,
-      this.textColor = Colors.black,
+      this.textColor,
       this.separatorLineColor,
       this.separatorLineHeight = 1,
-      this.selectedIcon = Icons.radio_button_checked,
-      this.unSelectedIcon = Icons.circle_outlined,
-      this.radioColor = const Color.fromARGB(255, 121, 80, 242),
+      this.radioColor,
       required this.onChanged,
-      this.isToggleable = false,
       Key? key})
       : super(key: key);
   final bool disabled;
   final bool hidden;
   final HMRadioSize size;
-  final Color radioColor;
-  final Color textColor;
+  final Color? radioColor;
+  final Color? textColor;
   final Color? separatorLineColor;
   final double separatorLineHeight;
 
@@ -45,9 +42,6 @@ class HMRadio extends HookWidget {
   final dynamic value;
   final List radioList;
   final double boxRadius;
-  final bool isToggleable;
-  final IconData selectedIcon;
-  final IconData unSelectedIcon;
   final Border? border;
   final void Function(dynamic value) onChanged;
 
@@ -107,7 +101,8 @@ class HMRadio extends HookWidget {
             padding: const EdgeInsets.only(right: 20.0),
             child: SizedBox.square(
               dimension: _getTextSize(size),
-              child: RadioIcon(isChecked: isSelected, color: radioColor),
+              child: RadioIcon(
+                  isChecked: isSelected, color: radioColor ?? defaultColor),
             ),
           ),
         ];

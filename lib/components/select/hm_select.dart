@@ -16,7 +16,7 @@ class HMSelect extends HookWidget {
       this.separatorLineColor,
       this.separatorLineHeight = 1,
       this.selectIcon = Icons.check,
-      this.selectList = const [],
+      required this.selectList,
       this.size = HMSelectSize.md,
       this.selectIconColor,
       this.isLeft = false,

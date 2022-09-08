@@ -20,7 +20,8 @@ class DetailsPage<T> extends HookWidget {
   final bool isModal;
   final Widget Function(ValueNotifier<T> value) destinationPage;
 
-  buildPage(BuildContext context, ValueNotifier<T> selection) async {
+  Future<void> buildPage(
+      BuildContext context, ValueNotifier<T> selection) async {
     await Navigator.of(context).push(
       MaterialPageRoute<T>(
         builder: (BuildContext context) => Material(
@@ -83,7 +84,7 @@ class DetailsPage<T> extends HookWidget {
     final ValueNotifier<bool> bottomsheetIsOpen = useState(false);
     useEffect(() {
       onChange(selection.value);
-      print('first print: ${selection.value}');
+      // print('first print: ${selection.value}');
       return null;
     }, [selection.value]);
 

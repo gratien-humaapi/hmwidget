@@ -40,7 +40,7 @@ class HMIconButton extends HookWidget {
       required bool isPressed,
       required double size,
       required double radius}) {
-    Color myIconColor = iconColor ?? defaultColor;
+    final Color myIconColor = iconColor ?? defaultColor;
 
     return Visibility(
       visible: !hidden,
@@ -82,7 +82,7 @@ class HMIconButton extends HookWidget {
           : child;
   Widget _styledInnerContent(
       {required IconData icon, required bool isPressed, required double size}) {
-    Color myIconColor = iconColor ?? defaultColor;
+    final Color myIconColor = iconColor ?? defaultColor;
     return Icon(
       icon,
       color: disabled
@@ -98,7 +98,7 @@ class HMIconButton extends HookWidget {
   Widget build(BuildContext context) {
     final isPressed = useState(false);
     final myRadius = (radius.value * size.value) / 80;
-    double mySize = size.value;
+    final double mySize = size.value;
     return AbsorbPointer(
       absorbing: disabled,
       child: _styledInnerContent(
@@ -111,12 +111,11 @@ class HMIconButton extends HookWidget {
           .parent(({required child}) => _outlinedBorder(
               child: child, isPressed: isPressed.value, radius: myRadius))
           .gestures(
-            onTap: disabled ? null : onPressed,
+            onTap: onPressed,
             onTapDown: (details) => isPressed.value = true,
             onTapUp: (details) => isPressed.value = false,
             onTapCancel: () => isPressed.value = false,
-          )
-          .alignment(Alignment.center),
+          ),
     );
   }
 }

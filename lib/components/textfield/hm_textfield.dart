@@ -18,7 +18,7 @@ class HMTextField extends HookWidget {
     this.iconColor,
     this.maxLength,
     this.textFieldType = HMTextFieldType.text,
-    this.textInputAction = TextInputAction.done,
+    this.textInputAction,
     this.keyboardType = TextInputType.text,
     this.suffixIcon,
     this.minLines = 2,
@@ -51,7 +51,7 @@ class HMTextField extends HookWidget {
   final void Function()? onTap;
   final void Function(String value)? onChange;
   final void Function(String value)? onSubmitted;
-  final TextInputAction textInputAction;
+  final TextInputAction? textInputAction;
   final TextInputType keyboardType;
   final HMTextFieldType textFieldType;
   final int minLines;
@@ -165,9 +165,7 @@ class HMTextField extends HookWidget {
                       isDense: true,
                     ),
                     onTap: onTap,
-                    onChanged: (value) {
-                      onChange!(value);
-                    },
+                    onChanged: onChange,
                     onSubmitted: onSubmitted,
                   ),
                 ),
@@ -219,12 +217,8 @@ class HMTextField extends HookWidget {
                       isDense: true,
                     ),
                     onTap: onTap,
-                    onChanged: (value) {
-                      onChange!(value);
-                    },
-                    onSubmitted: (value) {
-                      onSubmitted!(value);
-                    },
+                    onChanged: onChange,
+                    onSubmitted: onSubmitted,
                   ),
                 ),
                 GestureDetector(
@@ -299,12 +293,8 @@ class HMTextField extends HookWidget {
                       ),
                     ],
                     onTap: onTap,
-                    onChanged: (value) {
-                      onChange!(value);
-                    },
-                    onSubmitted: (value) {
-                      onSubmitted!(value);
-                    },
+                    onChanged: onChange,
+                    onSubmitted: onSubmitted,
                   ),
                 ),
               ],
@@ -340,8 +330,8 @@ class HMTextField extends HookWidget {
                     keyboardType: TextInputType.multiline,
                     textCapitalization: TextCapitalization.sentences,
                     textInputAction: textInputAction,
-                    minLines: 2,
-                    maxLines: 4,
+                    minLines: minLines,
+                    maxLines: maxLength,
                     autocorrect: true,
                     decoration: InputDecoration(
                       border: InputBorder.none,
@@ -352,17 +342,13 @@ class HMTextField extends HookWidget {
                       isDense: true,
                     ),
                     onTap: onTap,
-                    onChanged: (value) {
-                      onChange!(value);
-                    },
-                    onSubmitted: (value) {
-                      onSubmitted!(value);
-                    },
+                    onChanged: onChange,
+                    onSubmitted: onSubmitted,
                   ),
                 ),
                 suffixIcon != null
                     ? _buildSuffixIcon(_getTextSize(size))
-                    : const SizedBox(),
+                    : Container(),
               ],
             ),
           ),

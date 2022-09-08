@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hmwidget/size/hm_checkbox_size.dart';
-import 'package:hmwidget/utils/constant.dart';
-import 'package:hmwidget/utils/helper.dart';
-import 'package:hmwidget/utils/hm_raduis.dart';
 import 'package:styled_widget/styled_widget.dart';
 
+import '../../size/hm_checkbox_size.dart';
+import '../../utils/constant.dart';
+import '../../utils/helper.dart';
+import '../../utils/hm_raduis.dart';
 import '../../utils/sizes.dart';
 
 class HMCheckBox extends HookWidget {
   // final CheckBoxCustomProps customProps;
   const HMCheckBox({
-    Key? key,
+    super.key,
     this.label,
     this.disabled = false,
     this.hidden = false,
@@ -20,7 +20,7 @@ class HMCheckBox extends HookWidget {
     required this.value,
     this.color,
     required this.onChange,
-  }) : super(key: key);
+  });
   final bool disabled;
   final bool hidden;
   final String? label;
@@ -78,7 +78,7 @@ class HMCheckBox extends HookWidget {
             padding: const EdgeInsets.only(left: 10.0, right: 10.0),
             child: Center(
               child: Text(
-                label ?? "",
+                label ?? '',
                 style: TextStyle(
                     color: disabled
                         ? const Color.fromRGBO(181, 183, 186, 1)
@@ -110,7 +110,7 @@ class HMCheckBox extends HookWidget {
           .gestures(onTap: () {
         isChecked.value = !isChecked.value;
         onChange(isChecked.value);
-      }).alignment(Alignment.center),
+      }),
     );
   }
 }

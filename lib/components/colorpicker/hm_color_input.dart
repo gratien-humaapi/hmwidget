@@ -18,28 +18,35 @@ class UpperCaseTextFormatter extends TextInputFormatter {
 }
 
 class HMColorIpnut extends HookWidget {
+  HMColorIpnut(
+      {super.key,
+      this.initialColor,
+      required this.onColorChange,
+      this.inputRaduis = 8});
   final String? initialColor;
   final double inputRaduis;
-  HMColorIpnut({Key? key, this.initialColor, this.inputRaduis = 8})
-      : super(key: key);
+  final void Function(String) onColorChange;
 
   TextEditingController colorController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final ValueNotifier<String> myColor = useState(initialColor ?? "#FF000000");
+    final ValueNotifier<String> myColor = useState(initialColor ?? '#FF000000');
     colorController.value = TextEditingValue(
         text: myColor.value,
         selection: TextSelection.collapsed(offset: myColor.value.length));
+
+    // myColor.addListener(() {});
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         GestureDetector(
           onTap: () {
-            showColorDialog(context).then((dynamic value) {
-              print(value);
-              if (value != null) {
+            showColorDialog(context, myColor.value).then((dynamic value) {
+              // print(value);
+              if (value != null && value != myColor.value.toColor()) {
                 myColor.value = colorToString(value as Color);
+                onColorChange(myColor.value);
               }
             });
           },
@@ -65,7 +72,7 @@ class HMColorIpnut extends HookWidget {
             maxLength: 8,
             decoration: const InputDecoration(
               border: InputBorder.none,
-              counterText: "",
+              counterText: '',
               // filled: true,
               isDense: true,
               // prefix: Text("#"),
@@ -76,20 +83,21 @@ class HMColorIpnut extends HookWidget {
     ).center();
   }
 
-  Future<dynamic> showColorDialog(BuildContext context) {
+  Future<dynamic> showColorDialog(BuildContext context, String currentColor) {
     return showDialog(
         context: context,
         builder: (BuildContext ctx) {
-          Color cValue = Colors.black;
+          Color cValue = currentColor.toColor();
           return AlertDialog(
             titlePadding: const EdgeInsets.all(10),
             // titleTextStyle: const TextStyle(
             //     fontWeight: FontWeight.bold,
             //     fontSize: 20,
             //     color: Colors.black),
-            title: const Text("Color picker").fontSize(20),
+            title: const Text('Color picker').fontSize(20),
             content: SingleChildScrollView(
               child: HMColorPicker(
+                currentColor: currentColor.toColor(),
                 onColorChanged: (Color color) {
                   cValue = color;
                 },

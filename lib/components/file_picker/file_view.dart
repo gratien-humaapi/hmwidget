@@ -3,12 +3,11 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hmwidget/components/file_picker/hm_file_picker_logic.dart';
-import 'package:hmwidget/components/iconbutton/hm_iconbutton.dart';
-import 'package:hmwidget/utils/constant.dart';
-import 'package:hmwidget/custom_icons_icons.dart';
+import 'package:styled_widget/styled_widget.dart';
 
-import '../../size/hm_iconbutton_size.dart';
+import '../../hmwidget.dart';
+import '../../utils/constant.dart';
+import 'hm_file_picker_logic.dart';
 
 class FilesPage extends HookWidget {
   final List<PlatformFile> files;
@@ -36,19 +35,22 @@ class FilesPage extends HookWidget {
           child: buildTitle(selectedList, listFiles, isSelecting),
         ),
         Expanded(
-          child: GridView.builder(
-              shrinkWrap: true,
-              controller: controller,
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.all(10),
-              itemCount: listFiles.value.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                mainAxisExtent: 150,
-                crossAxisCount: 3,
-              ),
-              itemBuilder: (context, index) {
-                return buildFile(index, listFiles, selectedList, isSelecting);
-              }),
+          child: listFiles.value.isEmpty
+              ? Center(child: Text('No file selected.').fontSize(18))
+              : GridView.builder(
+                  shrinkWrap: true,
+                  controller: controller,
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.all(10),
+                  itemCount: listFiles.value.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    mainAxisExtent: 150,
+                    crossAxisCount: 3,
+                  ),
+                  itemBuilder: (context, index) {
+                    return buildFile(
+                        index, listFiles, selectedList, isSelecting);
+                  }),
         ),
       ],
     );
@@ -75,7 +77,7 @@ class FilesPage extends HookWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 20),
                   child: Text(
-                    "${selectedList.value.length} selected",
+                    '${selectedList.value.length} selected',
                     style: const TextStyle(
                         fontSize: 18, fontWeight: FontWeight.bold),
                   ),
@@ -117,18 +119,20 @@ class FilesPage extends HookWidget {
               const Expanded(
                 child: Center(
                   child: Text(
-                    "All Files",
+                    'Selected Files',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
               HMIconButton(
-                  onPressed: () {
-                    isSelecting.value = true;
-                  },
-                  size: HMIconButtonSize.sm,
-                  icon: CustomIcons.sans_titre,
-                  iconColor: Colors.black),
+                onPressed: () {
+                  isSelecting.value = true;
+                },
+                disabled: listFiles.value.isEmpty,
+                size: HMIconButtonSize.sm,
+                icon: Icons.highlight_alt,
+                iconColor: Colors.black,
+              ),
               const SizedBox(width: 20),
             ],
           );
@@ -140,8 +144,8 @@ class FilesPage extends HookWidget {
     final kb = file.size / 1024;
     final mb = kb / 1024;
     final fileSize =
-        mb >= 1 ? "${mb.toStringAsFixed(2)} MB" : "${kb.toStringAsFixed(2)} KB";
-    final extension = file.extension ?? "none";
+        mb >= 1 ? '${mb.toStringAsFixed(2)} MB' : '${kb.toStringAsFixed(2)} KB';
+    final extension = file.extension ?? 'none';
 
     return GestureDetector(
       onTap: () {

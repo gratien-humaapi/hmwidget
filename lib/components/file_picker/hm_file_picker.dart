@@ -1,55 +1,58 @@
+import 'package:camera/camera.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-import '../../utils/constant.dart';
 import '../../size/hm_iconbutton_size.dart';
 import '../../type/file_source.dart';
 import '../../type/hm_button_type.dart';
+import '../../utils/constant.dart';
 import '../actions_sheet/action_sheet.dart';
 import '../iconbutton/hm_iconbutton.dart';
+import 'camera_page.dart';
 import 'file_view.dart';
 import 'hm_file_picker_logic.dart';
 
 class HMFilePiker extends HookWidget {
-  final bool isMultipleSelection;
-  final List<Map<String, dynamic>> selectSource;
-  final bool fileViewInModal;
-  final FileType fileType;
-
   const HMFilePiker({
-    this.isMultipleSelection = false,
-    required this.selectSource,
-    this.fileViewInModal = true,
-    required this.fileType,
-    Key? key,
-  }) : super(key: key);
+    required this.fileViewInModal,
+    required this.isMultipleFiles,
+    required this.onFileSelected,
+    super.key,
+  });
 
+  final bool fileViewInModal;
+  final bool isMultipleFiles;
+  final void Function(List<PlatformFile> files) onFileSelected;
+
+// The build function
   @override
   Widget build(BuildContext context) {
-    final ValueNotifier<PlatformFile> selectedFile =
-        useState(PlatformFile(name: '', size: 0));
-    final ValueNotifier<List<PlatformFile>> multipleFiles =
+    final ValueNotifier<List<PlatformFile>> selectedFiles =
         useState(<PlatformFile>[]);
+    selectedFiles.addListener(() {
+      onFileSelected(selectedFiles.value);
+    });
     return Container(
-      child: isMultipleSelection
-          ? multipleFilePanel(context, multipleFiles, selectedFile)
-          : singleFilePanel(context, selectedFile, multipleFiles),
+      child: isMultipleFiles
+          ? multipleFilePanel(context, selectedFiles)
+          : singleFilePanel(context, selectedFiles),
     );
   }
 
   Widget singleFilePanel(
-      BuildContext context,
-      ValueNotifier<PlatformFile> selectedFile,
-      ValueNotifier<List<PlatformFile>> multipleFiles) {
+      BuildContext context, ValueNotifier<List<PlatformFile>> selectedFiles) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         Expanded(
           child: GestureDetector(
-            onTap: () => showActionSheet(
-                context: context,
-                actions: buildSourceList(selectedFile, multipleFiles)),
+            onTap: () {
+              showActionSheet(
+                  context: context,
+                  actions: buildSourceList(
+                      selectedFiles: selectedFiles, context: context));
+            },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Container(
@@ -60,18 +63,19 @@ class HMFilePiker extends HookWidget {
                     borderRadius: BorderRadius.circular(10)),
                 child: Row(
                   children: [
-                    if (selectedFile.value.path != null)
-                      FilePickerLogic.buildIcon(
-                          selectedFile.value, selectedFile.value.extension!),
+                    if (selectedFiles.value.isNotEmpty)
+                      FilePickerLogic.buildIcon(selectedFiles.value.first,
+                          selectedFiles.value.first.extension!, 25),
                     const SizedBox(width: 15),
-                    Expanded(
-                      child: Text(
-                        selectedFile.value.name,
-                        // textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(height: 1.5),
+                    if (selectedFiles.value.isNotEmpty)
+                      Expanded(
+                        child: Text(
+                          selectedFiles.value.first.name,
+                          // textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(height: 1.5),
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
@@ -90,7 +94,8 @@ class HMFilePiker extends HookWidget {
                 onPressed: () async {
                   showActionSheet(
                       context: context,
-                      actions: buildSourceList(selectedFile, multipleFiles));
+                      actions: buildSourceList(
+                          selectedFiles: selectedFiles, context: context));
                   // FilePickerLogic.pickFile(selectedFile, fileType);
                 }),
             const SizedBox(width: 10),
@@ -101,8 +106,8 @@ class HMFilePiker extends HookWidget {
                 size: HMIconButtonSize.sm,
                 iconColor: Colors.white,
                 onPressed: () {
-                  if (selectedFile.value.path != null) {
-                    selectedFile.value = PlatformFile(name: '', size: 0);
+                  if (selectedFiles.value.isNotEmpty) {
+                    selectedFiles.value = [];
                   }
                 }),
             // const SizedBox(width: 20),
@@ -113,43 +118,76 @@ class HMFilePiker extends HookWidget {
   }
 
   List<ActionSheetItem> buildSourceList(
-      ValueNotifier<PlatformFile> selectedFile,
-      ValueNotifier<List<PlatformFile>> multipleFiles) {
-    final List<ActionSheetItem> sourceList =
-        selectSource.map((Map<String, dynamic> source) {
-      String title = source['source'].value as String;
-      Widget icon = source['icon'] as Widget;
+      {required BuildContext context,
+      required ValueNotifier<List<PlatformFile>> selectedFiles}) {
+    final List sourcesList = [
+      HMFileSource(
+          icon: const Icon(
+            Icons.camera_alt_rounded,
+            color: Colors.blue,
+          ),
+          source: FileSource.camera),
+      HMFileSource(
+          icon: const Icon(
+            Icons.photo,
+            color: Colors.blue,
+          ),
+          source: FileSource.gallery),
+      HMFileSource(
+          icon: const Icon(
+            Icons.insert_drive_file,
+            color: Colors.blue,
+          ),
+          source: FileSource.document),
+    ];
+    final List<ActionSheetItem> actionsList = sourcesList.map((source) {
+      final String title = source.source.value as String;
+      final Widget icon = source.icon as Widget;
       return ActionSheetItem(
           icon: icon,
           title: title,
           onPressed: () async {
-            if (source['source'] == FileSource.camera) {
-              // final XFile? image = fileType == FileType.image
-              //     ? await ImagePicker().pickImage(source: ImageSource.camera)
-              //     : await ImagePicker().pickVideo(source: ImageSource.camera);
-              // if (image == null) return;
-
-              // final int size = await image.length();
-              // selectedFile.value =
-              //     PlatformFile(path: image.path, name: image.name, size: size);
+            if (source.source == FileSource.camera) {
+              await availableCameras().then(
+                (value) => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => CameraPage(cameras: value)),
+                ).then((value) async {
+                  if (value != null) {
+                    final int size = await value.length() as int;
+                    selectedFiles.value = [
+                      PlatformFile(
+                          name: value.name as String,
+                          size: size,
+                          path: value.path as String)
+                    ];
+                  }
+                }),
+              );
+            } else if (source.source == FileSource.gallery) {
+              isMultipleFiles
+                  ? FilePickerLogic.pickMultipleFiles(
+                      selectedFiles, FileType.media)
+                  : FilePickerLogic.pickFile(selectedFiles, FileType.media);
             } else {
-              isMultipleSelection
-                  ? FilePickerLogic.pickMultipleFiles(multipleFiles, fileType)
-                  : FilePickerLogic.pickFile(selectedFile, fileType);
+              isMultipleFiles
+                  ? FilePickerLogic.pickMultipleFiles(
+                      selectedFiles, FileType.any)
+                  : FilePickerLogic.pickFile(selectedFiles, FileType.any);
             }
           });
     }).toList();
-    return sourceList;
+    return actionsList;
   }
 
   Widget multipleFilePanel(
-      BuildContext context,
-      ValueNotifier<List<PlatformFile>> multipleFiles,
-      ValueNotifier<PlatformFile> selectedFile) {
+    BuildContext context,
+    ValueNotifier<List<PlatformFile>> multipleFiles,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        selectedFileView(multipleFiles, context, selectedFile),
+        selectedFileView(multipleFiles, context),
         //here
         Row(
           children: [
@@ -162,7 +200,8 @@ class HMFilePiker extends HookWidget {
                 onPressed: () async {
                   showActionSheet(
                       context: context,
-                      actions: buildSourceList(selectedFile, multipleFiles));
+                      actions: buildSourceList(
+                          selectedFiles: multipleFiles, context: context));
                   // await pickMultipleFiles(multipleFiles);
                 }),
             const SizedBox(width: 10),
@@ -178,7 +217,8 @@ class HMFilePiker extends HookWidget {
                   } else {
                     showActionSheet(
                         context: context,
-                        actions: buildSourceList(selectedFile, multipleFiles));
+                        actions: buildSourceList(
+                            selectedFiles: multipleFiles, context: context));
                   }
                 }),
             // const SizedBox(width: 20),
@@ -188,19 +228,20 @@ class HMFilePiker extends HookWidget {
     );
   }
 
-  Widget selectedFileView(ValueNotifier<List<PlatformFile>> multipleFiles,
-      BuildContext context, ValueNotifier<PlatformFile> selectedFile) {
+  Widget selectedFileView(
+      ValueNotifier<List<PlatformFile>> selectedFiles, BuildContext context) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: GestureDetector(
           onTap: () {
-            if (multipleFiles.value.isNotEmpty) {
-              openMultipleFiles(multipleFiles, context);
+            if (selectedFiles.value.isNotEmpty) {
+              openMultipleFiles(selectedFiles, context);
             } else {
               showActionSheet(
                   context: context,
-                  actions: buildSourceList(selectedFile, multipleFiles));
+                  actions: buildSourceList(
+                      selectedFiles: selectedFiles, context: context));
             }
           },
           child: Container(
@@ -214,7 +255,7 @@ class HMFilePiker extends HookWidget {
                 backgroundColor: Colors.blue,
                 radius: 15,
                 child: Text(
-                  "${multipleFiles.value.length > 99 ? "99+" : multipleFiles.value.length}",
+                  "${selectedFiles.value.length > 99 ? "99+" : selectedFiles.value.length}",
                   style: const TextStyle(
                       fontSize: 12, height: 1.5, fontWeight: FontWeight.w600),
                 ),
@@ -223,7 +264,7 @@ class HMFilePiker extends HookWidget {
               // Text("${}"),
               Expanded(
                 child: Text(
-                  multipleFiles.value.map((PlatformFile e) => e.name).join(','),
+                  selectedFiles.value.map((PlatformFile e) => e.name).join(','),
                   maxLines: 1,
                   softWrap: false,
                   style: const TextStyle(
@@ -260,7 +301,7 @@ class HMFilePiker extends HookWidget {
                       controller: scrollController,
                       files: files.value,
                       onEditingFile: (List<PlatformFile> newList) {
-                        print('object');
+                        // print('object');
                         files.value = newList;
                       });
                 },
@@ -274,7 +315,7 @@ class HMFilePiker extends HookWidget {
                 child: FilesPage(
                     files: files.value,
                     onEditingFile: (List<PlatformFile> newList) {
-                      print('object');
+                      // print('object');
                       files.value = newList;
                     }),
               ),

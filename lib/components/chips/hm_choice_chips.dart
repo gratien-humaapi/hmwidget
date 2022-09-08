@@ -84,6 +84,6 @@ class HMChoiceChips extends HookWidget {
           selected: selected,
         ).parent(({required child}) => _styledBox(
               child: child,
-            ))).alignment(Alignment.center);
+            )));
   }
 }

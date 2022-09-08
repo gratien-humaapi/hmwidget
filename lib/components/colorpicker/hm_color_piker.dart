@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:styled_widget/styled_widget.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class HMColorPicker extends HookWidget {
   const HMColorPicker({
-    Key? key,
+    super.key,
     this.disabled = false,
     this.hidden = false,
     this.displayThumbColor = true,
@@ -15,7 +15,7 @@ class HMColorPicker extends HookWidget {
     this.hueRingStrokeWidth = 20.0,
     this.colorPickerHeight = 250.0,
     required this.onColorChanged,
-  }) : super(key: key);
+  });
 
   final bool disabled;
   final bool hidden;
@@ -43,7 +43,7 @@ class HMColorPicker extends HookWidget {
         colorPickerHeight: colorPickerHeight,
         onColorChanged: (color) {
           pickerColor.value = color;
-          onColorChanged(pickerColor.value);
+          onColorChanged(color);
         });
   }
 

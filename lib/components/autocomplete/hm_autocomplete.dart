@@ -4,7 +4,7 @@ import 'package:styled_widget/styled_widget.dart';
 
 class HMAutocomplete extends HookWidget {
   final ValueNotifier value;
-  HMAutocomplete(
+  const HMAutocomplete(
       {Key? key,
       this.disabled = false,
       this.hidden = false,
@@ -43,12 +43,13 @@ class HMAutocomplete extends HookWidget {
         if (fieldViewBuilder != null)
           defaultfieldViewBuilder(context, controller, showClearButton)
         else
-          fieldViewBuilder!(context, controller.value, showClearButton),
+          fieldViewBuilder!(context, controller.value as TextEditingController,
+              showClearButton),
         // fieldViewBuilder != null
         //     ? fieldViewBuilder!(context, controller.value, () {})
         //     : fieldViewBuilder(context, controller, showClearButton, tempValue),
         // const SizedBox(height: 10),
-        if (controller.value.text.isEmpty && showClearButton.value)
+        if (controller.value.text.isEmpty as bool && showClearButton.value)
           Container()
         else
           Align(
@@ -108,7 +109,7 @@ class HMAutocomplete extends HookWidget {
             ),
             Expanded(
               child: TextField(
-                controller: controller.value,
+                controller: controller.value as TextEditingController,
                 autofocus: true,
                 textInputAction: TextInputAction.search,
                 style: const TextStyle(fontSize: 16, height: 1.5),
@@ -170,7 +171,7 @@ class HMAutocomplete extends HookWidget {
       _onChangedField();
     });
 
-    print('value.value :${value.value}');
+    // print('value.value :${value.value}');
     return AbsorbPointer(
         absorbing: disabled,
         child: _styledSelectPannel(
@@ -181,6 +182,6 @@ class HMAutocomplete extends HookWidget {
           context: context,
         ).parent(({required Widget child}) => _styledBox(
               child: child,
-            ))).alignment(Alignment.center);
+            )));
   }
 }

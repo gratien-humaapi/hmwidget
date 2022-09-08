@@ -2,32 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:styled_widget/styled_widget.dart';
 
+import '../../type/hm_select_type.dart';
 import '../../utils/constant.dart';
 import '../../utils/hm_raduis.dart';
-
-Widget badge = Scaffold(
-    body: HMSelectBadges(
-  disabled: false,
-  hidden: false,
-  radius: HMRadius.xl,
-  chipColor: Colors.lightBlue,
-  showDeleteIcon: true,
-  selectedList: const [
-    {'label': 'React', 'avatar': Text('R')},
-    {
-      'label': 'Call',
-      'avatar': Icon(Icons.phone, size: 20, color: Colors.blue)
-    },
-    {'label': 'Svelte', 'avatar': Text('S')},
-    {'label': 'Flutter', 'avatar': Icon(Icons.flutter_dash, size: 20)},
-    {'label': 'Vue', 'avatar': Text('V')},
-    {'label': 'Angular', 'avatar': Text('A')},
-  ],
-  onDeleted: () => print('Deleted'),
-  // deleteIcon: Icon(
-  //   Icons.close,
-  //   size: 18 ),
-));
 
 class HMSelectBadges extends HookWidget {
   // final SelectBadgesCustomProps customProps;
@@ -50,11 +27,11 @@ class HMSelectBadges extends HookWidget {
 
   final bool disabled;
   final bool hidden;
-  final List selectedList;
+  final List<HMSelectedItem> selectedList;
   final HMRadius radius;
   final bool showDeleteIcon;
   final Color? chipColor;
-  final void Function() onDeleted;
+  final void Function(HMSelectedItem) onDeleted;
   final double spacing;
   final bool isFilled;
   final BorderSide? borderSide;
@@ -62,10 +39,10 @@ class HMSelectBadges extends HookWidget {
   final Color? deleteIconColor;
   final Icon? deleteIcon;
 
-  List<Widget> buildChip(filters) {
-    return selectedList.map((item) {
-      final String label = item['label'] as String;
-      final Widget avatar = item['avatar'] as Widget;
+  List<Widget> buildChip(ValueNotifier<List<HMSelectedItem>> selectedItems) {
+    return selectedItems.value.map((item) {
+      final String label = item.label;
+      final Widget avatar = item.avatar;
       return InputChip(
         visualDensity: VisualDensity.compact,
         avatar: avatar,
@@ -90,7 +67,10 @@ class HMSelectBadges extends HookWidget {
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radius.value)),
         onDeleted: () {
-          onDeleted;
+          List<HMSelectedItem> copy = List.from(selectedItems.value);
+          copy.remove(item);
+          selectedItems.value = copy;
+          onDeleted(item);
         },
       );
     }).toList();
@@ -102,29 +82,26 @@ class HMSelectBadges extends HookWidget {
       Visibility(visible: !hidden, child: child);
 
   Widget _styledSelectPannel({
-    required ValueNotifier<dynamic> filters,
-    required ValueNotifier<dynamic> choice,
+    required ValueNotifier<List<HMSelectedItem>> selectedItems,
   }) {
     return Wrap(
       direction: Axis.horizontal,
-      spacing: 5, // spacing,
-      runSpacing: 5, //spacing / 2,
-      children: buildChip(filters),
+      spacing: spacing,
+      runSpacing: spacing / 2,
+      children: buildChip(selectedItems),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final ValueNotifier<List> filterItems = useState([]);
-    final ValueNotifier<String> choice = useState('');
+    final selectedItems = useState(selectedList);
 
     return AbsorbPointer(
         absorbing: disabled,
         child: _styledSelectPannel(
-          filters: filterItems,
-          choice: choice,
+          selectedItems: selectedItems,
         ).parent(({required child}) => _styledBox(
               child: child,
-            ))).alignment(Alignment.center);
+            )));
   }
 }

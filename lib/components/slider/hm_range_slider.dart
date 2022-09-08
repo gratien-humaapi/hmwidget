@@ -17,8 +17,7 @@ class HMRangeSlider extends HookWidget {
     this.hidden = false,
     this.marks,
     this.orientation = HMOrientation.horizontal,
-    this.sliderType,
-    this.rangeValues,
+    required this.rangeValues,
     this.rangeMinValue = 0,
     this.rangeMaxValue = 100,
     this.color,
@@ -30,8 +29,7 @@ class HMRangeSlider extends HookWidget {
   final bool hidden;
   final List<HMSliderMark>? marks;
   final HMOrientation orientation;
-  final SliderType? sliderType;
-  final RangeValues? rangeValues;
+  final RangeValues rangeValues;
   final double rangeMinValue;
   final double rangeMaxValue;
   final Color? color;
@@ -95,8 +93,7 @@ class HMRangeSlider extends HookWidget {
     TextStyle textStyle = TextStyle(
         color: disabled ? const Color.fromRGBO(177, 178, 179, 1) : Colors.black,
         fontSize: 12);
-    final initialValue =
-        rangeValues ?? RangeValues(rangeMinValue, rangeMaxValue);
+    final initialValue = rangeValues;
     final selectedRange = useState(initialValue);
     return SizedBox(
       child: Transform(
@@ -116,7 +113,7 @@ class HMRangeSlider extends HookWidget {
               rangeValues: selectedRange,
             ).parent(({required child}) => _styledBox(
                   child: child,
-                ))).alignment(Alignment.center),
+                ))),
       ),
     );
   }

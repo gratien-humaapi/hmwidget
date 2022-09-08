@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hmwidget/size/hm_button_size.dart';
-import 'package:hmwidget/utils/constant.dart';
-import 'package:hmwidget/utils/helper.dart';
-import 'package:hmwidget/utils/hm_raduis.dart';
 import 'package:styled_widget/styled_widget.dart';
 
+import '../../size/hm_button_size.dart';
 import '../../type/hm_button_type.dart';
+import '../../utils/constant.dart';
+import '../../utils/helper.dart';
+import '../../utils/hm_raduis.dart';
 import '../../utils/sizes.dart';
 
 /// child of  type [Widget] is alternative to title key. title will get priority over child
@@ -27,7 +27,7 @@ class HMButton extends HookWidget {
     this.hidden = false,
   })  : assert(icon == null && iconAtLeft == null),
         assert(buttonVariant == HMButtonVariant.filled || textColor != null,
-            "You must give a textColor if button is not filled");
+            'You must give a textColor if button is not filled');
   final bool disabled;
   final bool hidden;
   final String content;
@@ -49,7 +49,8 @@ class HMButton extends HookWidget {
     return child
         .padding(horizontal: 2.0)
         .constrained(
-            maxWidth: fullWidth ? double.infinity : (size.value * 1.0) + 10,
+            minWidth: fullWidth ? double.infinity : 50,
+            // maxWidth: fullWidth ? double.infinity : (size.value * 1.0) + 10,
             maxHeight: getRatio(size.value))
         .decorated(
           color: disabled
@@ -94,9 +95,7 @@ class HMButton extends HookWidget {
               color: disabled
                   ? const Color.fromRGBO(173, 181, 189, 1.0)
                   : textColor!.withOpacity(isPressed ? 0.5 : 1.0)),
-        )
-      else
-        Container(),
+        ),
       Container(
         margin: EdgeInsets.symmetric(horizontal: getIconSize(size) / 5),
         child: Text(text)
@@ -113,7 +112,7 @@ class HMButton extends HookWidget {
     ];
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      // mainAxisSize: MainAxisSize.max,
+      mainAxisSize: MainAxisSize.min,
       children: iconAtLeft ?? true ? children1 : children1.reversed.toList(),
     );
   }

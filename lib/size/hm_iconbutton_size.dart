@@ -7,6 +7,6 @@ enum HMIconButtonSize {
   lg(54.0),
   xl(64.0);
 
-  final double value;
   const HMIconButtonSize(this.value);
+  final double value;
 }

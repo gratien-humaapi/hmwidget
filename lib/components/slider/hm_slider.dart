@@ -21,8 +21,7 @@ class HMSlider extends HookWidget {
     this.hidden = false,
     this.marks,
     this.orientation = HMOrientation.horizontal,
-    this.sliderType,
-    this.value,
+    required this.value,
     this.min,
     this.max,
     this.color,
@@ -34,8 +33,7 @@ class HMSlider extends HookWidget {
   final bool hidden;
   final List<HMSliderMark>? marks;
   final HMOrientation orientation;
-  final SliderType? sliderType;
-  final int? value;
+  final int value;
   final double? min;
   final double? max;
   final Color? color;
@@ -100,7 +98,7 @@ class HMSlider extends HookWidget {
     TextStyle textStyle = TextStyle(
         color: disabled ? const Color.fromRGBO(177, 178, 179, 1) : Colors.black,
         fontSize: 12);
-    final sliderValue = useState(value!);
+    final sliderValue = useState(value);
     return SizedBox(
       child: Transform.rotate(
         angle: orientation == HMOrientation.horizontal ? 0 : -math.pi / 2,
@@ -113,7 +111,7 @@ class HMSlider extends HookWidget {
               marks: marks,
             ).parent(({required child}) => _styledBox(
                   child: child,
-                ))).alignment(Alignment.center),
+                ))),
       ),
     );
   }

@@ -1,6 +1,6 @@
 name: hmwidget
 description: Easy to use open source UI library with Widgets to build flutter app.
-version: 0.0.2+1
+version: 0.0.2+2
 repository: https://github.com/gratien-humaapi/hmwidget
 
 environment:
@@ -8,11 +8,14 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
+  camera: ^0.10.0+1
   file_picker: ^5.0.1
   flutter:
     sdk: flutter
   flutter_colorpicker: ^1.0.3
   flutter_hooks: ^0.18.5+1
+  image_picker: ^0.8.5+3
+  path_provider: ^2.0.11
   styled_widget: ^0.4.0+3
 
 dev_dependencies:
@@ -42,10 +45,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  fonts:
-    - family: CustomIcons
-      fonts:
-        - asset: fonts/CustomIcons.ttf
+  # fonts:
+  #   - family: CustomIcons
+  #     fonts:
+  #       - asset: fonts/CustomIcons.ttf
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf

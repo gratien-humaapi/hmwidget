@@ -163,10 +163,11 @@ class HMSwitch extends HookWidget {
     final isOn = useState(value);
     final animationController = useAnimationController(duration: duration);
     Animation<AlignmentGeometry> alignment = Tween<AlignmentGeometry>(
-      begin: Alignment.centerLeft,
-      end: Alignment.centerRight,
-    ).animate(animationController);
-    getLabelSize(size);
+            begin: Alignment.centerLeft, end: Alignment.centerRight)
+        .animate(animationController);
+    if (isOn.value) {
+      animationController.forward();
+    }
 
     return AbsorbPointer(
       absorbing: disabled,
@@ -181,7 +182,7 @@ class HMSwitch extends HookWidget {
           isOn.value = !isOn.value;
           handleChange(isOn.value, animationController);
         },
-      ).alignment(Alignment.center),
+      ),
     );
   }
 }

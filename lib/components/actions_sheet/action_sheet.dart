@@ -1,18 +1,18 @@
 import 'package:flutter/cupertino.dart';
 
 class ActionSheetItem {
+  const ActionSheetItem(
+      {required this.title, required this.onPressed, this.icon});
   final Widget? icon;
   final String title;
   final void Function() onPressed;
-  const ActionSheetItem(
-      {required this.title, required this.onPressed, this.icon});
 }
 
 Future<dynamic> showActionSheet(
     {required BuildContext context,
     required List<ActionSheetItem> actions,
     bool hasCancelButton = true}) {
-  print(actions);
+  // print(actions);
   return showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
@@ -27,7 +27,7 @@ Future<dynamic> showActionSheet(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      action.icon!,
+                      action.icon ?? Container(),
                       const SizedBox(width: 20),
                       Text(action.title),
                     ],

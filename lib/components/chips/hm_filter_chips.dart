@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hmwidget/utils/constant.dart';
+import 'package:styled_widget/styled_widget.dart';
 
-import "package:styled_widget/styled_widget.dart";
+import '../../utils/constant.dart';
 
 class HMFilterChips extends HookWidget {
   const HMFilterChips(
@@ -85,6 +85,6 @@ class HMFilterChips extends HookWidget {
           selected: selected,
         ).parent(({required child}) => _styledBox(
               child: child,
-            ))).alignment(Alignment.center);
+            )));
   }
 }

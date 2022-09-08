@@ -33,15 +33,15 @@ double getIconSize(HMButtonSize size) {
 double getTextSize(HMButtonSize size) {
   switch (size) {
     case HMButtonSize.xs:
-      return 14.0;
+      return 12.0;
     case HMButtonSize.sm:
-      return 16.0;
+      return 14.0;
     case HMButtonSize.md:
-      return 18.0;
+      return 16.0;
     case HMButtonSize.lg:
-      return 20.0;
+      return 18.0;
     case HMButtonSize.xl:
-      return 22.0;
+      return 20.0;
   }
 }
 
