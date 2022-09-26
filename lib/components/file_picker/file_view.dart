@@ -36,7 +36,7 @@ class FilesPage extends HookWidget {
         ),
         Expanded(
           child: listFiles.value.isEmpty
-              ? Center(child: Text('No file selected.').fontSize(18))
+              ? Center(child: const Text('No file selected.').fontSize(18))
               : GridView.builder(
                   shrinkWrap: true,
                   controller: controller,
@@ -71,7 +71,7 @@ class FilesPage extends HookWidget {
                     isSelecting.value = false;
                   },
                   size: HMIconButtonSize.sm,
-                  icon: Icons.close_rounded,
+                  icon: const Icon(Icons.close_rounded),
                   iconColor: Colors.black),
               Expanded(
                 child: Padding(
@@ -93,7 +93,7 @@ class FilesPage extends HookWidget {
                     }
                   },
                   size: HMIconButtonSize.sm,
-                  icon: Icons.select_all_rounded,
+                  icon: const Icon(Icons.select_all_rounded),
                   iconColor: Colors.black),
               const SizedBox(width: 20),
               HMIconButton(
@@ -109,7 +109,7 @@ class FilesPage extends HookWidget {
                     onEditingFile(listFiles.value);
                   },
                   size: HMIconButtonSize.sm,
-                  icon: Icons.delete,
+                  icon: const Icon(Icons.delete),
                   iconColor: Colors.black),
               const SizedBox(width: 10),
             ],
@@ -130,7 +130,7 @@ class FilesPage extends HookWidget {
                 },
                 disabled: listFiles.value.isEmpty,
                 size: HMIconButtonSize.sm,
-                icon: Icons.highlight_alt,
+                icon: const Icon(Icons.highlight_alt),
                 iconColor: Colors.black,
               ),
               const SizedBox(width: 20),

@@ -4,108 +4,146 @@ import 'package:styled_widget/styled_widget.dart';
 
 import '../../size/hm_button_size.dart';
 import '../../type/hm_button_type.dart';
-import '../../utils/constant.dart';
 import '../../utils/helper.dart';
-import '../../utils/hm_raduis.dart';
+import '../../utils/hm_radius.dart';
 import '../../utils/sizes.dart';
+import '../../widget_theme.dart';
 
 /// child of  type [Widget] is alternative to title key. title will get priority over child
+
 class HMButton extends HookWidget {
   const HMButton({
     super.key,
     required this.content,
     this.fillColor,
     this.textColor,
-    this.radius = HMRadius.sm,
-    this.size = HMButtonSize.md,
+    this.radius,
+    this.size,
     this.fullWidth = false,
     this.buttonVariant,
     this.icon,
-    this.iconAtLeft,
+    this.iconAtLeft = true,
     required this.onPressed,
     this.disabled = false,
     this.hidden = false,
-  })  : assert(icon == null && iconAtLeft == null),
-        assert(buttonVariant == HMButtonVariant.filled || textColor != null,
-            'You must give a textColor if button is not filled');
+  });
+  //  :
+  // assert(buttonVariant == HMButtonVariant.filled || textColor != null,
+  //           'You must give a textColor if button is not filled');
   final bool disabled;
   final bool hidden;
   final String content;
   final Color? fillColor;
   final Color? textColor;
-  final HMRadius radius;
-  final HMButtonSize size;
+  final HMRadius? radius;
+  final HMButtonSize? size;
   final bool fullWidth;
   final HMButtonVariant? buttonVariant;
-  final IconData? icon;
+  final Widget? icon;
   final bool? iconAtLeft;
 
   final void Function() onPressed;
   // final ButtonCustomProps customProps;
-  Widget _styledBox(
-      {required Widget child,
-      required bool isPressed,
-      required double radius}) {
+
+  // The button Container
+  Widget _styledBox({
+    required Widget child,
+    required bool isPressed,
+    required HMButtonSize buttonSize,
+    required double buttonRadius,
+    required HMButtonVariant variant,
+    required HMButtonTheme? buttonTheme,
+    required Color buttonTextColor,
+    required Color buttonColor,
+  }) {
     return child
-        .padding(horizontal: 2.0)
+        .padding(
+            horizontal: buttonSize.value * 0.1,
+            vertical: buttonSize.value * 0.05)
         .constrained(
             minWidth: fullWidth ? double.infinity : 50,
-            // maxWidth: fullWidth ? double.infinity : (size.value * 1.0) + 10,
-            maxHeight: getRatio(size.value))
+            // maxWidth: fullWidth ? double.infinity : (buttonSize.value * 1.0) + 10,
+            maxHeight: getRatio(buttonSize.value))
         .decorated(
           color: disabled
               ? const Color.fromRGBO(228, 229, 230, 1)
               : Color.alphaBlend(
-                  buttonVariant == HMButtonVariant.filled
-                      ? Colors.black.withOpacity(isPressed ? 0.1 : 0.0)
-                      : textColor!.withOpacity(isPressed ? 0.1 : 0.0),
-                  buttonVariant == HMButtonVariant.filled
-                      ? fillColor ?? defaultColor
+                  variant == HMButtonVariant.filled
+                      ? Colors.black.withOpacity(isPressed ? 0.2 : 0.0)
+                      : buttonTextColor.withOpacity(isPressed ? 0.2 : 0.0),
+                  variant == HMButtonVariant.filled
+                      ? buttonColor
                       : Colors.transparent),
-          border: buttonVariant == HMButtonVariant.outlined
+          border: variant == HMButtonVariant.outlined
               ? Border.all(
-                  color: textColor!,
+                  color: buttonTextColor,
                   style: disabled ? BorderStyle.none : BorderStyle.solid)
-              : null,
-          borderRadius: BorderRadius.circular(radius),
+              : Border.all(style: BorderStyle.none),
+          borderRadius: BorderRadius.circular(buttonRadius),
         );
   }
 
+// The overlay border when button clicked
   Widget _outlinedBorder(
           {required Widget child,
           required bool isPressed,
-          required double radius}) =>
-      buttonVariant == HMButtonVariant.filled
-          ? child.padding(all: 3).decorated(
-              border: isPressed
-                  ? Border.all(color: fillColor ?? defaultColor, width: 2)
-                  : null,
-              borderRadius: BorderRadius.circular(radius * 1.2))
-          : child;
+          required HMButtonVariant variant,
+          required HMButtonSize buttonSize,
+          required Color buttonTextColor,
+          required Color buttonColor,
+          required double buttonRadius,
+          required HMButtonTheme? buttonTheme}) =>
+      Visibility(
+        visible: !hidden,
+        child: variant == HMButtonVariant.filled
+            ? child.padding(all: 3).decorated(
+                border:
+                    isPressed ? Border.all(color: buttonColor, width: 2) : null,
+                borderRadius: BorderRadius.circular(buttonRadius * 1.2))
+            : child,
+      );
+
+  // The content of the button
   Widget _styledInnerContent(
       {required String text,
-      required IconData? icon,
-      required bool isPressed}) {
+      required Widget? icon,
+      required bool isPressed,
+      required Color buttonTextColor,
+      required Color buttonColor,
+      required HMButtonTheme? buttonTheme,
+      required HMButtonSize buttonSize,
+      required double buttonRadius,
+      required HMButtonVariant variant}) {
     final List<Widget> children1 = <Widget>[
       if (icon != null)
         Container(
-          margin: EdgeInsets.symmetric(horizontal: getIconSize(size) / 14),
-          child: Icon(icon,
-              size: getIconSize(size),
-              color: disabled
-                  ? const Color.fromRGBO(173, 181, 189, 1.0)
-                  : textColor!.withOpacity(isPressed ? 0.5 : 1.0)),
-        ),
+            margin: EdgeInsets.symmetric(horizontal: buttonSize.value * 0.05),
+            child: ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                  const Color(0xFFADB5BD).withOpacity(disabled ? 1 : 0.0),
+                  BlendMode.srcATop),
+              child: icon,
+            )
+            // Icon(icon,
+            //     buttonSize: getIconSize(buttonSize),
+            //     color: disabled
+            //         ? const Color.fromRGBO(173, 181, 189, 1.0)
+            //         : buttonTheme?.textColor
+            //                 ?.withOpacity(isPressed ? 0.5 : 1.0) ??
+            //             textColor!.withOpacity(isPressed ? 0.5 : 1.0)),
+            ),
       Container(
-        margin: EdgeInsets.symmetric(horizontal: getIconSize(size) / 5),
+        margin: EdgeInsets.symmetric(horizontal: buttonSize.value * 0.1),
         child: Text(text)
-            .fontSize(getTextSize(size))
+            .fontSize(getTextSize(buttonSize))
             .textColor(
               disabled
-                  ? const Color.fromRGBO(173, 181, 189, 1.0)
-                  : buttonVariant == HMButtonVariant.filled
-                      ? textColor ?? checkColor(fillColor ?? defaultColor)
-                      : textColor!.withOpacity(isPressed ? 0.5 : 1.0),
+                  ? const Color(0xFFADB5BD)
+                  : variant == HMButtonVariant.filled
+                      ? textColor ??
+                          buttonTheme?.textColor ??
+                          checkColor(buttonColor)
+                      : buttonTextColor,
             )
             .alignment(Alignment.center),
       ),
@@ -119,18 +157,54 @@ class HMButton extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double myradius = (radius.value * size.value) / 80;
+    final buttonTheme = Theme.of(context).extension<HMButtonTheme>();
+    final buttonSize = size ?? buttonTheme?.size ?? HMButtonSize.md;
+    final myRadius = radius ?? buttonTheme?.radius ?? HMRadius.sm;
+    final buttonRadius = (myRadius.value * buttonSize.value) / 80;
+    final buttonColor = fillColor ??
+        buttonTheme?.fillColor ??
+        const Color.fromRGBO(121, 80, 242, 1);
+    final buttonTextColor = textColor ??
+        buttonTheme?.textColor ??
+        const Color.fromRGBO(121, 80, 242, 1);
+    final variant =
+        buttonVariant ?? buttonTheme?.buttonVariant ?? HMButtonVariant.filled;
+
     final ValueNotifier<bool> isPressed = useState(false);
     return AbsorbPointer(
       absorbing: disabled,
       child: _styledInnerContent(
-              text: content, isPressed: isPressed.value, icon: icon)
+              text: content,
+              isPressed: isPressed.value,
+              icon: icon,
+              buttonSize: buttonSize,
+              buttonTextColor: buttonTextColor,
+              buttonColor: buttonColor,
+              variant: variant,
+              buttonRadius: buttonRadius,
+              buttonTheme: buttonTheme)
           .parent(({required Widget child}) => _styledBox(
-              child: child, isPressed: isPressed.value, radius: myradius))
+              child: child,
+              isPressed: isPressed.value,
+              variant: variant,
+              buttonTextColor: buttonTextColor,
+              buttonColor: buttonColor,
+              buttonRadius: buttonRadius,
+              buttonSize: buttonSize,
+              buttonTheme: buttonTheme))
           .parent(({required Widget child}) => _outlinedBorder(
-              child: child, isPressed: isPressed.value, radius: myradius))
+              child: child,
+              buttonRadius: buttonRadius,
+              buttonSize: buttonSize,
+              variant: variant,
+              buttonTextColor: buttonTextColor,
+              buttonColor: buttonColor,
+              isPressed: isPressed.value,
+              buttonTheme: buttonTheme))
           .gestures(
-            onTap: onPressed,
+            onTap: () {
+              onPressed();
+            },
             onTapDown: (TapDownDetails details) => isPressed.value = true,
             onTapUp: (TapUpDetails details) => isPressed.value = false,
             onTapCancel: () => isPressed.value = false,

@@ -8,31 +8,36 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
-  camera: ^0.10.0+1
-  file_picker: ^5.0.1
+
   flutter:
     sdk: flutter
   flutter_colorpicker: ^1.0.3
   flutter_hooks: ^0.18.5+1
   image_picker: ^0.8.5+3
-  path_provider: ^2.0.11
   styled_widget: ^0.4.0+3
+  camera: ^0.10.0+1
+  file_picker: ^5.0.1
+  flutter_svg: ^1.1.5
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  build_runner: ^2.2.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+
 
 # The following section is specific to Flutter packages.
 flutter:
 
   # To add assets to your package, add an assets section, like this:
   # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  #   - assets/images/jpg1.jpg
+  #   - assets/images/jpg2.jpg
+
   #
   # For details regarding assets in packages, see
   # https://flutter.dev/assets-and-images/#from-packages

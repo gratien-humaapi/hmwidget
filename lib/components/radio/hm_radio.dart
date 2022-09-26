@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:styled_widget/styled_widget.dart';
 
+import '../../hmwidget.dart';
 import '../../utils/constant.dart';
 import '../../size/hm_radio_size.dart';
+import '../../widget_theme.dart';
 
 class HMRadio extends HookWidget {
   // final RadioCustomProps customProps;
@@ -15,33 +17,34 @@ class HMRadio extends HookWidget {
       {this.disabled = false,
       this.hidden = false,
       required this.radioList,
-      this.size = HMRadioSize.md,
-      this.value,
-      this.isLeft = true,
-      this.boxRadius = 4,
+      this.size,
+      required this.value,
+      this.isLeft,
+      this.boxRadius,
       this.border,
       this.textColor,
       this.separatorLineColor,
-      this.separatorLineHeight = 1,
+      this.separatorLineHeight,
       this.radioColor,
       required this.onChanged,
       Key? key})
       : super(key: key);
+
   final bool disabled;
   final bool hidden;
-  final HMRadioSize size;
+  final HMRadioSize? size;
   final Color? radioColor;
   final Color? textColor;
   final Color? separatorLineColor;
-  final double separatorLineHeight;
+  final double? separatorLineHeight;
 
   /// The position of the icon on the line
   ///`"true"` to put the icon before the title
   ///and `"false"`to put the icon to end.
-  final bool isLeft;
-  final dynamic value;
+  final bool? isLeft;
+  final String value;
   final List radioList;
-  final double boxRadius;
+  final HMRadius? boxRadius;
   final Border? border;
   final void Function(dynamic value) onChanged;
 
@@ -62,17 +65,24 @@ class HMRadio extends HookWidget {
 
   Widget _styledBox({
     required Widget child,
+    required double radioRadius,
   }) =>
       Visibility(
           visible: !hidden,
           child: Container(
               decoration: BoxDecoration(
                   border: border ?? Border.all(color: outlineColor),
-                  borderRadius: BorderRadius.circular(boxRadius)),
+                  borderRadius: BorderRadius.circular(radioRadius)),
               child: child));
 
   Widget _styledRadioPannel({
-    required ValueNotifier<dynamic> selection,
+    required double radioRadius,
+    required HMRadioSize radioSize,
+    required Color radioTextColor,
+    required Color color,
+    required bool iconAtLeft,
+    required Object separatorColor,
+    required double separatorHeight,
   }) {
     return ListView.separated(
       padding: EdgeInsets.zero,
@@ -80,50 +90,48 @@ class HMRadio extends HookWidget {
       shrinkWrap: true,
       separatorBuilder: (BuildContext context, sIndex) {
         return Divider(
-          height: separatorLineHeight,
+          height: separatorHeight,
           indent: 0.0,
           endIndent: 0.0,
-          thickness: separatorLineHeight,
+          thickness: separatorHeight,
           // color: Colors.black,
         );
       },
       itemBuilder: (context, index) {
-        bool isSelected = selection.value == radioList[index];
+        final bool isSelected = value == radioList[index];
         List<Widget> children = [
           Text(
             '${radioList[index]}',
             style: TextStyle(
-              fontSize: _getTextSize(size),
-              color: disabled ? Colors.grey : textColor,
+              fontSize: _getTextSize(radioSize),
+              color: disabled ? Colors.grey : radioTextColor,
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(right: 20.0),
             child: SizedBox.square(
-              dimension: _getTextSize(size),
-              child: RadioIcon(
-                  isChecked: isSelected, color: radioColor ?? defaultColor),
+              dimension: _getTextSize(radioSize),
+              child: RadioIcon(isChecked: isSelected, color: color),
             ),
           ),
         ];
         return GestureDetector(
           onTap: () {
-            if (radioList[index] != selection.value) {
-              selection.value = radioList[index];
-              // print('$index, ${selection.value}');
-              onChanged(selection.value);
+            if (radioList[index] != value) {
+              // print('$index, ${value}');
+              onChanged(radioList[index]);
             }
           },
           child: Container(
-            height: _getTextSize(size) * 3,
+            height: _getTextSize(radioSize) * 3,
             padding: const EdgeInsets.only(left: 20.0),
             decoration: BoxDecoration(
                 color: disabled ? outlineColor.withOpacity(0.2) : null),
             child: Row(
-              mainAxisAlignment: isLeft
+              mainAxisAlignment: iconAtLeft
                   ? MainAxisAlignment.start
                   : MainAxisAlignment.spaceBetween,
-              children: isLeft ? children.reversed.toList() : children,
+              children: iconAtLeft ? children.reversed.toList() : children,
             ),
           ),
         );
@@ -133,14 +141,33 @@ class HMRadio extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final radioSelection = useState(value);
+    final radioTheme = Theme.of(context).extension<HMRadioTheme>();
+    final radioSize = size ?? radioTheme?.size ?? HMRadioSize.md;
+    final myRadius = boxRadius ?? radioTheme?.boxRadius ?? HMRadius.sm;
+    final radioRadius = (myRadius.value * radioSize.value) / 80;
+    final color = radioColor ??
+        radioTheme?.radioColor ??
+        const Color.fromRGBO(121, 80, 242, 1);
+    final radioTextColor = textColor ?? radioTheme?.textColor ?? Colors.black;
+    final iconAtLeft = isLeft ?? radioTheme?.isLeft ?? true;
+    final separatorHeight =
+        separatorLineHeight ?? radioTheme?.separatorLineHeight ?? 1;
+    final separatorColor =
+        separatorLineColor ?? radioTheme?.separatorLineColor ?? outlineColor;
 
     return AbsorbPointer(
         absorbing: disabled,
         child: _styledRadioPannel(
-          selection: radioSelection,
+          radioRadius: radioRadius,
+          radioSize: radioSize,
+          color: color,
+          separatorColor: separatorColor,
+          separatorHeight: separatorHeight,
+          radioTextColor: radioTextColor,
+          iconAtLeft: iconAtLeft,
         ).parent(({required child}) => _styledBox(
               child: child,
+              radioRadius: radioRadius,
             )));
   }
 }
@@ -154,7 +181,7 @@ class RadioIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: isChecked ? Check() : UnCheck(),
+      painter: isChecked ? Check(color) : UnCheck(),
     );
   }
 }
@@ -179,13 +206,21 @@ class UnCheck extends CustomPainter {
 }
 
 class Check extends CustomPainter {
+  Check(this.color);
+  final Color color;
   @override
   void paint(Canvas canvas, Size size) {
     final radius = math.min(size.height, size.width) / 2;
     final center = Offset(size.width / 2, size.height / 2);
+    canvas.drawCircle(
+        center,
+        radius,
+        Paint()
+          ..color = color
+          ..strokeWidth = 1.0
+          ..style = PaintingStyle.stroke);
 
-    canvas.drawCircle(center, radius,
-        Paint()..color = const Color.fromARGB(255, 121, 80, 242));
+    canvas.drawCircle(center, radius, Paint()..color = color);
     canvas.drawCircle(center, radius / 2, Paint()..color = Colors.white);
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hmwidget/theme/slider_theme_data/path_painter.dart';
-import 'package:hmwidget/utils/hm_raduis.dart';
+import 'package:hmwidget/utils/hm_radius.dart';
 
 class ValueIndicatorShape extends SliderComponentShape {
   final double sliderValue;

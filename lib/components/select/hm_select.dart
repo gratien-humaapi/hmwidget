@@ -2,44 +2,47 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:styled_widget/styled_widget.dart';
 
-import '../../utils/constant.dart';
 import '../../size/hm_select_size.dart';
+import '../../utils/constant.dart';
+import '../../utils/hm_radius.dart';
+import '../../widget_theme.dart';
 
 class HMSelect extends HookWidget {
-  const HMSelect(
-      {this.border,
-      this.disabled = false,
-      this.hidden = false,
-      this.value,
-      this.boxRadius = 4,
-      this.textColor = Colors.black,
-      this.separatorLineColor,
-      this.separatorLineHeight = 1,
-      this.selectIcon = Icons.check,
-      required this.selectList,
-      this.size = HMSelectSize.md,
-      this.selectIconColor,
-      this.isLeft = false,
-      required this.onChanged,
-      super.key});
+  const HMSelect({
+    this.disabled = false,
+    this.hidden = false,
+    required this.value,
+    this.boxRadius,
+    this.divider,
+    this.textColor,
+    this.separatorLineColor,
+    this.separatorLineHeight,
+    this.selectIcon,
+    required this.selectList,
+    this.size,
+    this.selectIconColor,
+    this.isLeft,
+    required this.onChanged,
+    super.key,
+  });
 
   final bool disabled;
   final bool hidden;
-  final HMSelectSize size;
-  final double boxRadius;
-  final IconData selectIcon;
+  final HMSelectSize? size;
+  final HMRadius? boxRadius;
+  final Widget? selectIcon;
+  final Widget? divider;
   final Color? selectIconColor;
-  final Color textColor;
+  final Color? textColor;
   final Color? separatorLineColor;
-  final double separatorLineHeight;
+  final double? separatorLineHeight;
   final dynamic value;
   final List selectList;
-  final Border? border;
 
   /// The position of the icon on the line
   ///`"true"` to put the icon before the title
   ///and `"false"`to put the icon to end.
-  final bool isLeft;
+  final bool? isLeft;
   final void Function(dynamic value) onChanged;
 
   double _getTextSize(HMSelectSize size) {
@@ -63,85 +66,100 @@ class HMSelect extends HookWidget {
       Visibility(visible: !hidden, child: child);
 
   Widget _styledSelectPannel({
-    required ValueNotifier<dynamic> selection,
+    required HMSelectSize selectSize,
+    required HMRadius selectBoxRadius,
+    required Color selectColor,
+    required Color selectTextColor,
+    required bool iconAtLeft,
   }) {
-    return buildSelectItems(selection);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final ValueNotifier selection = useState(value);
-
-    return AbsorbPointer(
-        absorbing: disabled,
-        child: _styledSelectPannel(
-          selection: selection,
-        ).parent(({required child}) => _styledBox(
-              child: child,
-            )));
-  }
-
-  Widget buildSelectItems(ValueNotifier<dynamic> selection) {
     return Container(
       decoration: BoxDecoration(
-          border: border ?? Border.all(color: Colors.black38),
-          borderRadius: BorderRadius.circular(boxRadius)),
+          border: Border.all(color: outlineColor),
+          borderRadius: BorderRadius.circular(selectBoxRadius.value)),
       child: ListView.separated(
         padding: EdgeInsets.zero,
         // physics: BouncingScrollPhysics(),
         itemCount: selectList.length,
         shrinkWrap: true,
         separatorBuilder: (BuildContext context, int sIndex) {
-          return Divider(
-            height: separatorLineHeight,
-            indent: 0.0,
-            endIndent: 0.0,
-            thickness: separatorLineHeight,
-            // color: Colors.black,
-          );
+          return divider ??
+              Divider(
+                  height: 1,
+                  indent: 0.0,
+                  endIndent: 0.0,
+                  thickness: 1,
+                  color: outlineColor);
         },
         itemBuilder: (BuildContext context, int index) {
-          final bool isSelected = selection.value == selectList[index];
+          final bool isSelected = value == selectList[index];
           final List<Widget> children = [
             Text(
               '${selectList[index]}',
               style: TextStyle(
-                fontSize: _getTextSize(size),
+                fontSize: _getTextSize(selectSize),
                 color: disabled ? Colors.grey : textColor,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(right: 20.0),
-              child: Icon(
-                isSelected ? selectIcon : null,
-                color: disabled ? Colors.grey : selectIconColor ?? defaultColor,
-                size: _getTextSize(size) * 1.3,
-              ),
+            SizedBox(
+              width: 50.0,
+              child: isSelected
+                  ? selectIcon ??
+                      Icon(
+                        Icons.check,
+                        color: disabled ? Colors.grey : selectColor,
+                        size: _getTextSize(selectSize) * 1.3,
+                      )
+                  : Container(),
             ),
           ];
           return GestureDetector(
             onTap: () {
-              if (selectList[index] != selection.value) {
-                selection.value = selectList[index];
-                // print('$index, ${selection.value}');
-                onChanged(selection.value);
+              if (selectList[index] != value) {
+                // print('$index, ${value}');
+                onChanged(selectList[index]);
               }
             },
             child: Container(
-              height: _getTextSize(size) * 3,
-              padding: const EdgeInsets.only(left: 20.0),
+              height: _getTextSize(selectSize) * 3,
+              // padding: const EdgeInsets.only(left: 20.0),
               decoration: BoxDecoration(
                   color: disabled ? outlineColor.withOpacity(0.2) : null),
               child: Row(
-                mainAxisAlignment: isLeft
+                mainAxisAlignment: iconAtLeft
                     ? MainAxisAlignment.start
                     : MainAxisAlignment.spaceBetween,
-                children: isLeft ? children.reversed.toList() : children,
+                children: iconAtLeft ? children.reversed.toList() : children,
               ),
             ),
           );
         },
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final selectTheme = Theme.of(context).extension<HMSelectTheme>();
+    final HMSelectSize selectSize =
+        size ?? selectTheme?.size ?? HMSelectSize.md;
+    final HMRadius selectBoxRadius =
+        boxRadius ?? selectTheme?.boxRadius ?? HMRadius.md;
+    final iconAtLeft = isLeft ?? selectTheme?.isLeft ?? true;
+    final Color selectColor =
+        selectIconColor ?? selectTheme?.selectIconColor ?? defaultColor;
+    final Color selectTextColor =
+        textColor ?? selectTheme?.textColor ?? Colors.black;
+
+    return AbsorbPointer(
+        absorbing: disabled,
+        child: _styledSelectPannel(
+          selectSize: selectSize,
+          selectBoxRadius: selectBoxRadius,
+          selectColor: selectColor,
+          selectTextColor: selectTextColor,
+          iconAtLeft: iconAtLeft,
+        ).parent(({required child}) => _styledBox(
+              child: child,
+            )));
   }
 }

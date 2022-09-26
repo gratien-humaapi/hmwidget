@@ -5,33 +5,31 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 import '../../utils/constant.dart';
+import '../../utils/hm_radius.dart';
+import '../../widget_theme.dart';
 
 class HMChoiceChips extends HookWidget {
   const HMChoiceChips(
       {this.disabled = false,
       this.hidden = false,
-      this.radius = 10,
+      this.radius,
       this.selectedColor,
-      this.isFilled = false,
-      this.scale = 1.0,
+      this.isFilled,
       this.avatar,
       required this.label,
       this.borderSide,
       this.textColor,
       this.backgroundColor,
-      this.spacing = 10,
       required this.onSelected,
       Key? key})
       : super(key: key);
 
   final bool disabled;
   final bool hidden;
-  final double radius;
+  final HMRadius? radius;
   final Widget? avatar;
   final Widget label;
-  final double spacing;
-  final double scale;
-  final bool isFilled;
+  final bool? isFilled;
   final BorderSide? borderSide;
   final Color? backgroundColor;
   final Color? selectedColor;
@@ -43,45 +41,66 @@ class HMChoiceChips extends HookWidget {
   }) =>
       Visibility(visible: !hidden, child: child);
 
-  Widget _styledSelectPannel({required ValueNotifier<bool> selected}) {
+  Widget _styledSelectPannel(
+      {required ValueNotifier<bool> selected,
+      required bool isfilledChip,
+      required Color chipBackgroundColor,
+      required Color selectedChipColor,
+      required BorderSide chipBorderSide,
+      required Color chipTextColor,
+      required HMRadius chipRadius}) {
     return ChoiceChip(
         visualDensity: VisualDensity.compact,
         avatar: avatar,
         label: label,
         selected: selected.value,
-        backgroundColor: disabled
-            ? outlineColor.withOpacity(0.3)
-            : isFilled
-                ? backgroundColor ?? defaultColor
-                : Colors.grey[100],
-        selectedColor: isFilled
-            ? selectedColor ??
-                Color.alphaBlend(Colors.black.withOpacity(0.3),
-                    backgroundColor ?? defaultColor)
-            : Colors.grey[100],
+        disabledColor: Color(0x16000000),
+        backgroundColor:
+            isfilledChip ? chipBackgroundColor : Colors.transparent,
+        selectedColor: isfilledChip
+            ? selectedChipColor
+            : selectedChipColor.withOpacity(0.1),
         side: BorderSide(
-            width: 1,
-            color:
-                selected.value ? selectedColor ?? defaultColor : outlineColor,
-            style: isFilled ? BorderStyle.none : BorderStyle.solid),
+            color: selected.value ? selectedChipColor : Colors.grey,
+            style: isfilledChip ? BorderStyle.none : BorderStyle.solid),
         elevation: 0.0,
         pressElevation: 0.0,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
-        onSelected: (bool value) {
-          selected.value = value;
-          onSelected(value);
-        });
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(chipRadius.value)),
+        onSelected: disabled
+            ? null
+            : (bool value) {
+                selected.value = value;
+                onSelected(value);
+              });
   }
 
   @override
   Widget build(BuildContext context) {
+    final chipTheme = Theme.of(context).extension<HMChipTheme>();
+    final isfilledChip = isFilled ?? chipTheme?.isFilled ?? false;
+    final chipRadius = radius ?? chipTheme?.radius ?? HMRadius.xl;
+    final Color chipBackgroundColor =
+        backgroundColor ?? chipTheme?.backgroundColor ?? Colors.black26;
+    final Color selectedChipColor =
+        selectedColor ?? chipTheme?.selectedColor ?? defaultColor;
+    final Color chipTextColor =
+        textColor ?? chipTheme?.textColor ?? Colors.black;
     final selected = useState(false);
+    final BorderSide chipBorderSide = borderSide ??
+        chipTheme?.borderSide ??
+        BorderSide(color: selected.value ? defaultColor : outlineColor);
 
     return AbsorbPointer(
         absorbing: disabled,
         child: _styledSelectPannel(
           selected: selected,
+          isfilledChip: isfilledChip,
+          chipRadius: chipRadius,
+          chipBackgroundColor: chipBackgroundColor,
+          selectedChipColor: selectedChipColor,
+          chipTextColor: chipTextColor,
+          chipBorderSide: chipBorderSide,
         ).parent(({required child}) => _styledBox(
               child: child,
             )));

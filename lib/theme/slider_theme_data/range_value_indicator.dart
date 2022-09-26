@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hmwidget/utils/hm_raduis.dart';
+import 'package:hmwidget/utils/hm_radius.dart';
 
 import 'path_painter.dart';
 

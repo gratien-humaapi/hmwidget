@@ -112,7 +112,7 @@ class _CameraPageState extends State<CameraPage> {
                         // controller.setFlashMode(flashModeList[index]);
                       },
                       iconColor: Colors.white,
-                      icon: getFlashIcon(controller.value.flashMode),
+                      icon: Icon(getFlashIcon(controller.value.flashMode)),
                     ),
                     // The capture boutton
                     GestureDetector(
@@ -170,7 +170,7 @@ class _CameraPageState extends State<CameraPage> {
                         }
                       },
                       iconColor: Colors.white,
-                      icon: Icons.flip_camera_ios_outlined,
+                      icon: Icon(Icons.flip_camera_ios_outlined),
                     ),
                   ],
                 ),

@@ -1,5 +1,8 @@
 library hmwidget;
 
+export 'package:camera/camera.dart';
+export 'package:file_picker/file_picker.dart';
+
 export 'package:hmwidget/components/autocomplete/hm_autocomplete.dart';
 export 'package:hmwidget/components/button/hm_button.dart';
 export 'package:hmwidget/components/checkbox/hm_checkbox.dart';
@@ -20,6 +23,7 @@ export 'package:hmwidget/components/slider/hm_range_slider.dart';
 export 'package:hmwidget/components/slider/hm_slider.dart';
 export 'package:hmwidget/components/switch/hm_switch.dart';
 export 'package:hmwidget/components/textfield/hm_textfield.dart';
+
 export 'package:hmwidget/size/hm_button_size.dart';
 export 'package:hmwidget/size/hm_checkbox_size.dart';
 export 'package:hmwidget/size/hm_iconbutton_size.dart';
@@ -28,10 +32,12 @@ export 'package:hmwidget/size/hm_select_size.dart';
 export 'package:hmwidget/size/hm_slider_size.dart';
 export 'package:hmwidget/size/hm_switch_size.dart';
 export 'package:hmwidget/size/hm_textfield_size.dart';
+
 export 'package:hmwidget/type/file_source.dart';
 export 'package:hmwidget/type/hm_button_type.dart';
 export 'package:hmwidget/type/hm_chips_type.dart';
 export 'package:hmwidget/type/hm_select_type.dart';
 export 'package:hmwidget/type/hm_slider_type.dart';
 export 'package:hmwidget/type/hm_textfield_type.dart';
-export 'package:hmwidget/utils/hm_raduis.dart';
+
+export 'package:hmwidget/utils/hm_radius.dart';

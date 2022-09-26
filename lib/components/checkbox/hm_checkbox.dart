@@ -5,8 +5,9 @@ import 'package:styled_widget/styled_widget.dart';
 import '../../size/hm_checkbox_size.dart';
 import '../../utils/constant.dart';
 import '../../utils/helper.dart';
-import '../../utils/hm_raduis.dart';
+import '../../utils/hm_radius.dart';
 import '../../utils/sizes.dart';
+import '../../widget_theme.dart';
 
 class HMCheckBox extends HookWidget {
   // final CheckBoxCustomProps customProps;
@@ -15,8 +16,8 @@ class HMCheckBox extends HookWidget {
     this.label,
     this.disabled = false,
     this.hidden = false,
-    this.radius = HMRadius.sm,
-    this.size = HMCheckBoxSize.md,
+    this.radius,
+    this.size,
     required this.value,
     this.color,
     required this.onChange,
@@ -26,8 +27,8 @@ class HMCheckBox extends HookWidget {
   final String? label;
   final bool value;
   final Color? color;
-  final HMRadius radius;
-  final HMCheckBoxSize size;
+  final HMRadius? radius;
+  final HMCheckBoxSize? size;
   final void Function(bool) onChange;
 
   Widget _styledBox({required Widget child}) =>
@@ -35,39 +36,38 @@ class HMCheckBox extends HookWidget {
 
   Widget _styledInnerContent({
     required String? label,
-    required ValueNotifier<bool> isChecked,
     required Animation<double> animation,
+    required Color checkBoxColor,
+    required HMRadius checkBoxRadius,
+    required HMCheckBoxSize checkBoxSize,
   }) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Container(
-          height: size.value,
-          width: size.value,
+          height: checkBoxSize.value,
+          width: checkBoxSize.value,
           decoration: BoxDecoration(
             color: disabled
                 ? const Color.fromRGBO(228, 229, 230, 1)
-                : isChecked.value
-                    ? color ?? defaultColor
+                : value
+                    ? checkBoxColor
                     : Colors.transparent,
-            borderRadius: BorderRadius.circular(radius.value),
-            border: isChecked.value
+            borderRadius: BorderRadius.circular(checkBoxRadius.value),
+            border: value
                 ? null
                 : Border.all(
-                    color: const Color.fromRGBO(177, 183, 189, 1),
-                    width: 1,
-                    style: BorderStyle.solid),
+                    color: const Color.fromRGBO(177, 183, 189, 1), width: 2),
           ),
           child: Center(
               child: ScaleTransition(
             scale: animation,
-            alignment: Alignment.center,
             child: Icon(
-              isChecked.value ? Icons.check : null,
+              Icons.check,
               color: disabled
                   ? const Color.fromRGBO(175, 177, 179, 1)
-                  : checkColor(color ?? defaultColor),
-              size: size.value / 1.3,
+                  : checkColor(checkBoxColor),
+              size: checkBoxSize.value / 1.3,
             ),
           )),
         ),
@@ -94,22 +94,34 @@ class HMCheckBox extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isChecked = useState(value);
-    final controller =
-        useAnimationController(duration: const Duration(milliseconds: 200));
+    final HMCheckBoxTheme? checkBoxTheme =
+        Theme.of(context).extension<HMCheckBoxTheme>();
+    final Color checkBoxColor = color ?? checkBoxTheme?.color ?? defaultColor;
+    final HMRadius checkBoxRadius =
+        radius ?? checkBoxTheme?.radius ?? HMRadius.xl;
+    final HMCheckBoxSize checkBoxSize =
+        size ?? checkBoxTheme?.size ?? HMCheckBoxSize.md;
+
+    final controller = useAnimationController(
+        duration: const Duration(milliseconds: 200),
+        reverseDuration: const Duration(milliseconds: 200));
     final Animation<double> animation = CurvedAnimation(
       parent: controller,
       curve: Curves.fastOutSlowIn,
     );
-    isChecked.value ? controller.forward() : controller.reverse();
+    value ? controller.forward() : controller.reverse();
     return AbsorbPointer(
       absorbing: disabled,
       child: _styledInnerContent(
-              label: label, isChecked: isChecked, animation: animation)
-          .parent(({required Widget child}) => _styledBox(child: child))
-          .gestures(onTap: () {
-        isChecked.value = !isChecked.value;
-        onChange(isChecked.value);
+        label: label,
+        animation: animation,
+        checkBoxColor: checkBoxColor,
+        checkBoxRadius: checkBoxRadius,
+        checkBoxSize: checkBoxSize,
+      ).parent(({required Widget child}) => _styledBox(child: child)).gestures(
+          onTap: () {
+        // isChecked.value = !isChecked.value;
+        onChange(!value);
       }),
     );
   }

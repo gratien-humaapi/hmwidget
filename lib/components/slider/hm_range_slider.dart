@@ -7,7 +7,9 @@ import 'package:hmwidget/theme/slider_theme_data/range_value_indicator.dart';
 import 'package:styled_widget/styled_widget.dart';
 import 'dart:math' as math;
 import '../../type/hm_slider_type.dart';
-import '../../utils/hm_raduis.dart';
+import '../../utils/constant.dart';
+import '../../utils/hm_radius.dart';
+import '../../widget_theme.dart';
 
 class HMRangeSlider extends HookWidget {
   // final SliderCustomProps customProps;
@@ -16,19 +18,19 @@ class HMRangeSlider extends HookWidget {
     this.disabled = false,
     this.hidden = false,
     this.marks,
-    this.orientation = HMOrientation.horizontal,
+    this.orientation,
     required this.rangeValues,
     this.rangeMinValue = 0,
     this.rangeMaxValue = 100,
     this.color,
-    this.radius = HMRadius.xl,
-    this.size = HMSliderSize.md,
+    this.radius,
+    this.size,
     required this.onChange,
   }) : super(key: key);
   final bool disabled;
   final bool hidden;
   final List<HMSliderMark>? marks;
-  final HMOrientation orientation;
+  final HMOrientation? orientation;
   final RangeValues rangeValues;
   final double rangeMinValue;
   final double rangeMaxValue;
@@ -47,42 +49,52 @@ class HMRangeSlider extends HookWidget {
     required ValueNotifier<RangeValues> rangeValues,
     required SliderThemeData themeData,
     required TextStyle textStyle,
+    required HMSliderSize sliderSize,
+    required HMOrientation sliderOrientation,
+    required Color sliderColor,
+    required HMRadius sliderRadius,
   }) {
     return marks == null
-        ? getRangeSlider(rangeValues, themeData)
-        : getRangeSliderwithMark(marks, rangeValues, themeData, textStyle);
+        ? getRangeSlider(rangeValues, themeData, sliderSize.value)
+        : getRangeSliderwithMark(
+            marks, rangeValues, themeData, textStyle, sliderOrientation);
   }
 
   @override
   Widget build(BuildContext context) {
-    SliderThemeData sliderThemeData = SliderThemeData(
-      trackHeight: size!.value / 2,
-      rangeTrackShape: RangeSliderTrack(radius: radius!.value),
+    final HMSliderTheme? sliderTheme =
+        Theme.of(context).extension<HMSliderTheme>();
+    final sliderSize = size ?? sliderTheme?.size ?? HMSliderSize.md;
+    final sliderRadius = radius ?? sliderTheme?.radius ?? HMRadius.md;
+    final sliderColor = color ?? sliderTheme?.color ?? defaultColor;
+    final sliderOrientation =
+        orientation ?? sliderTheme?.orientation ?? HMOrientation.horizontal;
+    final SliderThemeData sliderThemeData = SliderThemeData(
+      trackHeight: sliderSize.value / 2,
+      rangeTrackShape: RangeSliderTrack(radius: sliderRadius.value),
       rangeTickMarkShape: RoundRangeSliderTickMarkShape(
-          tickMarkRadius: (size!.value * 15) / 100),
-      activeTrackColor: disabled
-          ? const Color.fromRGBO(196, 198, 200, 1)
-          : const Color.fromRGBO(121, 80, 242, 1),
+          tickMarkRadius: (sliderSize.value * 15) / 100),
+      activeTrackColor:
+          disabled ? const Color.fromRGBO(196, 198, 200, 1) : sliderColor,
       inactiveTrackColor: disabled
           ? const Color.fromRGBO(228, 229, 230, 1)
-          : const Color.fromRGBO(121, 80, 242, 0.4),
+          : sliderColor.withOpacity(0.5),
       rangeThumbShape: RangeThumbShape(
-        thumbRadius: size!.value,
+        thumbRadius: sliderSize.value,
       ),
       minThumbSeparation: 10,
-      thumbColor: disabled
-          ? const Color.fromRGBO(196, 198, 200, 1)
-          : color ?? const Color.fromRGBO(121, 80, 242, 1),
-      // overlayColor: const Color.fromRGBO(121, 80, 242, 0.5),
-      // overlayShape: const RoundSliderOverlayShape(overlayRadius: 20.0),
-      overlayShape: SliderComponentShape.noOverlay,
+      thumbColor:
+          disabled ? const Color.fromRGBO(196, 198, 200, 1) : sliderColor,
+      overlayColor: sliderColor.withOpacity(0.3),
+      overlayShape: const RoundSliderOverlayShape(overlayRadius: 15),
       activeTickMarkColor:
           disabled ? const Color.fromRGBO(228, 229, 230, 1) : Colors.white,
       inactiveTickMarkColor: Colors.white60,
       rangeValueIndicatorShape:
           // PaddleRangeSliderValueIndicatorShape(),
-          RangeValueIndicatorShape(sliderValue: 10, orientation: orientation),
-      valueIndicatorColor: color ?? const Color.fromRGBO(121, 80, 242, 1),
+          RangeValueIndicatorShape(
+              sliderValue: 10, orientation: sliderOrientation),
+      valueIndicatorColor: sliderColor,
       showValueIndicator: ShowValueIndicator.always,
       valueIndicatorTextStyle: const TextStyle(
         color: Colors.white,
@@ -90,7 +102,7 @@ class HMRangeSlider extends HookWidget {
       ),
     );
 
-    TextStyle textStyle = TextStyle(
+    final TextStyle textStyle = TextStyle(
         color: disabled ? const Color.fromRGBO(177, 178, 179, 1) : Colors.black,
         fontSize: 12);
     final initialValue = rangeValues;
@@ -101,7 +113,7 @@ class HMRangeSlider extends HookWidget {
         // Rotate sliders by 90 degrees
         transform: Matrix4.identity()
           ..rotateZ(
-            orientation == HMOrientation.horizontal ? 0 : -math.pi / 2,
+            sliderOrientation == HMOrientation.horizontal ? 0 : -math.pi / 2,
           ),
 
         child: AbsorbPointer(
@@ -111,6 +123,10 @@ class HMRangeSlider extends HookWidget {
               themeData: sliderThemeData,
               marks: marks,
               rangeValues: selectedRange,
+              sliderSize: sliderSize,
+              sliderRadius: sliderRadius,
+              sliderOrientation: sliderOrientation,
+              sliderColor: sliderColor,
             ).parent(({required child}) => _styledBox(
                   child: child,
                 ))),
@@ -118,12 +134,12 @@ class HMRangeSlider extends HookWidget {
     );
   }
 
-  Widget getRangeSlider(
-      ValueNotifier<RangeValues> rangeValues, SliderThemeData sliderThemeData) {
+  Widget getRangeSlider(ValueNotifier<RangeValues> rangeValues,
+      SliderThemeData sliderThemeData, double sliderSize) {
     var max = rangeMaxValue;
     var min = rangeMinValue;
     return Container(
-      height: size!.value + 5,
+      height: sliderSize + 5,
       margin: const EdgeInsets.symmetric(horizontal: 10),
       child: SliderTheme(
         data: sliderThemeData,
@@ -132,8 +148,8 @@ class HMRangeSlider extends HookWidget {
           min: min,
           max: max,
           divisions: max.toInt(),
-          labels: RangeLabels("${rangeValues.value.start.toInt()}",
-              "${rangeValues.value.end.toInt()}"),
+          labels: RangeLabels('${rangeValues.value.start.toInt()}',
+              '${rangeValues.value.end.toInt()}'),
           onChanged: (RangeValues newRanges) {
             rangeValues.value = newRanges;
           },
@@ -152,7 +168,8 @@ class HMRangeSlider extends HookWidget {
       List marks,
       ValueNotifier<RangeValues> rangeValues,
       SliderThemeData sliderThemeData,
-      TextStyle textStyle) {
+      TextStyle textStyle,
+      HMOrientation sliderOrientation) {
     final List a = marks.map((e) => e.value).toList();
     final range = useState(RangeValues(
         a.contains(rangeValues.value.start)
@@ -173,8 +190,8 @@ class HMRangeSlider extends HookWidget {
               min: 0.0,
               max: marks.length - 1.0,
               divisions: marks.length - 1,
-              labels: RangeLabels("${marks[range.value.start.toInt()].label}",
-                  "${marks[range.value.end.toInt()].label}"),
+              labels: RangeLabels('${marks[range.value.start.toInt()].label}',
+                  '${marks[range.value.end.toInt()].label}'),
               onChanged: (newRanges) {
                 range.value = newRanges;
               },
@@ -184,21 +201,23 @@ class HMRangeSlider extends HookWidget {
             ),
           ),
         ),
-        orientation == HMOrientation.vertical
-            ? const SizedBox(height: 6)
-            : Container(),
+        if (sliderOrientation == HMOrientation.vertical)
+          const SizedBox(height: 6)
+        else
+          Container(),
         Container(
           margin: const EdgeInsets.only(left: 5, right: 5),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: marks.map((e) {
               return Transform.rotate(
-                angle:
-                    orientation == HMOrientation.horizontal ? 0 : math.pi / 2,
+                angle: sliderOrientation == HMOrientation.horizontal
+                    ? 0
+                    : math.pi / 2,
                 child: SizedBox(
                     width: 40,
                     child: Text(
-                      "${e.label}",
+                      '${e.label}',
                       textAlign: TextAlign.center,
                       style: textStyle,
                     )),

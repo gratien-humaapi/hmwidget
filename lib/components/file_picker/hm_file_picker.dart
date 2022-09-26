@@ -86,7 +86,7 @@ class HMFilePiker extends HookWidget {
         Row(
           children: [
             HMIconButton(
-                icon: Icons.file_upload_outlined,
+                icon: const Icon(Icons.file_upload_outlined),
                 fillColor: Colors.blue,
                 iconColor: Colors.white,
                 buttonVariant: HMButtonVariant.filled,
@@ -100,7 +100,7 @@ class HMFilePiker extends HookWidget {
                 }),
             const SizedBox(width: 10),
             HMIconButton(
-                icon: Icons.close,
+                icon: const Icon(Icons.close),
                 buttonVariant: HMButtonVariant.filled,
                 fillColor: Colors.blue,
                 size: HMIconButtonSize.sm,
@@ -192,7 +192,7 @@ class HMFilePiker extends HookWidget {
         Row(
           children: [
             HMIconButton(
-                icon: Icons.file_upload_outlined,
+                icon: const Icon(Icons.file_upload_outlined),
                 fillColor: Colors.blue,
                 iconColor: Colors.white,
                 buttonVariant: HMButtonVariant.filled,
@@ -206,7 +206,7 @@ class HMFilePiker extends HookWidget {
                 }),
             const SizedBox(width: 10),
             HMIconButton(
-                icon: Icons.drive_file_rename_outline_outlined,
+                icon: const Icon(Icons.drive_file_rename_outline_outlined),
                 buttonVariant: HMButtonVariant.filled,
                 fillColor: Colors.blue,
                 size: HMIconButtonSize.sm,

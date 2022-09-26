@@ -22,9 +22,9 @@ class HMColorIpnut extends HookWidget {
       {super.key,
       this.initialColor,
       required this.onColorChange,
-      this.inputRaduis = 8});
+      this.inputRadius = 8});
   final String? initialColor;
-  final double inputRaduis;
+  final double inputRadius;
   final void Function(String) onColorChange;
 
   TextEditingController colorController = TextEditingController();
@@ -63,7 +63,7 @@ class HMColorIpnut extends HookWidget {
           // color: Colors.blue,
           decoration: BoxDecoration(
             color: const Color.fromRGBO(238, 238, 239, 1),
-            borderRadius: BorderRadius.circular(inputRaduis),
+            borderRadius: BorderRadius.circular(inputRadius),
           ),
           child: TextField(
             controller: colorController,

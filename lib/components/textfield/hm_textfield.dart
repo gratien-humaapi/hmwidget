@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hmwidget/utils/hm_raduis.dart';
+import 'package:hmwidget/utils/hm_radius.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 import '../../utils/constant.dart';
 import '../../size/hm_textfield_size.dart';
 import '../../type/hm_textfield_type.dart';
+import '../../widget_theme.dart';
 
 class HMTextField extends HookWidget {
   // final TextFieldCustomProps customProps;
@@ -21,17 +22,17 @@ class HMTextField extends HookWidget {
     this.textInputAction,
     this.keyboardType = TextInputType.text,
     this.suffixIcon,
-    this.minLines = 2,
-    this.maxLines = 4,
+    this.minLines,
+    this.maxLines,
     this.onChange,
     this.onSubmitted,
+    this.inputFormatters,
     this.onTap,
     this.prefixIcon,
     this.fillColor,
-    this.isRequired = false,
-    this.variant = HMTextVariant.outlined,
-    this.size = HMTextFieldSize.md,
-    this.radius = HMRadius.sm,
+    this.variant,
+    this.size,
+    this.radius,
     Key? key,
   }) : super(key: key);
   final bool disabled;
@@ -39,12 +40,12 @@ class HMTextField extends HookWidget {
   final String? hintText;
   final String? value;
   final int? maxLength;
-  final bool isRequired;
-  final HMTextVariant variant;
-  final HMTextFieldSize size;
-  final HMRadius radius;
+  final HMTextVariant? variant;
+  final HMTextFieldSize? size;
+  final HMRadius? radius;
   final Color? fillColor;
   final Color? iconColor;
+  final List<TextInputFormatter>? inputFormatters;
   final IconData? prefixIcon;
   final IconData? suffixIcon;
 
@@ -54,8 +55,8 @@ class HMTextField extends HookWidget {
   final TextInputAction? textInputAction;
   final TextInputType keyboardType;
   final HMTextFieldType textFieldType;
-  final int minLines;
-  final int maxLines;
+  final int? minLines;
+  final int? maxLines;
 
   double _getTextSize(HMTextFieldSize size) {
     switch (size) {
@@ -79,18 +80,38 @@ class HMTextField extends HookWidget {
 
   Widget _styledTextField({
     required ValueNotifier<TextEditingController> controller,
+    required HMTextFieldSize fieldSize,
+    required HMRadius fieldRadius,
+    required Color background,
+    required HMTextVariant fieldVariant,
+    required Color fieldIconColor,
   }) {
-    return buildTextField(textFieldType, controller);
+    return buildTextField(textFieldType, controller, fieldSize, fieldVariant,
+        fieldRadius, fieldIconColor, background);
   }
 
   @override
   Widget build(BuildContext context) {
+    final textFieldTheme = Theme.of(context).extension<HMTextFieldTheme>();
+    final background =
+        fillColor ?? textFieldTheme?.fillColor ?? const Color(0xFFE3E3E4);
+    final fieldRadius = radius ?? textFieldTheme?.radius ?? HMRadius.sm;
+    final fieldSize = size ?? textFieldTheme?.size ?? HMTextFieldSize.md;
+    final fieldVariant =
+        variant ?? textFieldTheme?.variant ?? HMTextVariant.filled;
+    final fieldIconColor =
+        iconColor ?? textFieldTheme?.iconColor ?? Colors.grey;
     final controller = useState(TextEditingController(text: value));
 
     return AbsorbPointer(
         absorbing: disabled,
         child: _styledTextField(
           controller: controller,
+          background: background,
+          fieldRadius: fieldRadius,
+          fieldSize: fieldSize,
+          fieldVariant: fieldVariant,
+          fieldIconColor: fieldIconColor,
         ).parent(({required child}) => _styledBox(
               child: child,
             )));
@@ -119,31 +140,35 @@ class HMTextField extends HookWidget {
   }
 
   Widget buildTextField(
-      HMTextFieldType type, ValueNotifier<TextEditingController> controller) {
-    final textSize = _getTextSize(size);
-    final showPassword = useState(true);
+      HMTextFieldType type,
+      ValueNotifier<TextEditingController> controller,
+      HMTextFieldSize fieldSize,
+      HMTextVariant fieldVariant,
+      HMRadius fieldRadius,
+      Color fieldIconColor,
+      Color background) {
+    final textSize = _getTextSize(fieldSize);
+    final showPassword = useState(false);
     switch (type) {
       case HMTextFieldType.text:
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: Container(
             decoration: BoxDecoration(
-              color: variant == HMTextVariant.filled
-                  ? fillColor ?? const Color.fromRGBO(236, 238, 239, 1)
-                  : null,
+              color: fieldVariant == HMTextVariant.filled ? background : null,
               border: Border.all(
                   color: outlineColor,
-                  width: 1.0,
-                  style: variant == HMTextVariant.filled
+                  style: fieldVariant == HMTextVariant.filled
                       ? BorderStyle.none
                       : BorderStyle.solid),
-              borderRadius: BorderRadius.circular(radius.value),
+              borderRadius: BorderRadius.circular(fieldRadius.value),
             ),
             child: Row(
               children: <Widget>[
-                prefixIcon != null
-                    ? _buildPrefixIcon(_getTextSize(size))
-                    : const SizedBox(),
+                if (prefixIcon != null)
+                  _buildPrefixIcon(_getTextSize(fieldSize))
+                else
+                  const SizedBox(),
                 Expanded(
                   child: TextField(
                     keyboardType: TextInputType.text,
@@ -151,10 +176,9 @@ class HMTextField extends HookWidget {
                     controller: controller.value,
                     style: TextStyle(fontSize: textSize),
                     textCapitalization: TextCapitalization.sentences,
-                    autocorrect: keyboardType == TextInputType.emailAddress
-                        ? false
-                        : true,
+                    autocorrect: !(keyboardType == TextInputType.emailAddress),
                     maxLength: maxLength,
+                    inputFormatters: inputFormatters,
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       counterText: '',
@@ -169,9 +193,10 @@ class HMTextField extends HookWidget {
                     onSubmitted: onSubmitted,
                   ),
                 ),
-                suffixIcon != null
-                    ? _buildSuffixIcon(_getTextSize(size))
-                    : const SizedBox(),
+                if (suffixIcon != null)
+                  _buildSuffixIcon(_getTextSize(fieldSize))
+                else
+                  const SizedBox(),
               ],
             ),
           ),
@@ -182,34 +207,33 @@ class HMTextField extends HookWidget {
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: Container(
             decoration: BoxDecoration(
-              color: variant == HMTextVariant.filled
-                  ? fillColor ?? const Color.fromRGBO(236, 238, 239, 1)
-                  : null,
+              color: fieldVariant == HMTextVariant.filled ? background : null,
               border: Border.all(
                   color: outlineColor,
-                  width: 1.0,
-                  style: variant == HMTextVariant.filled
+                  style: fieldVariant == HMTextVariant.filled
                       ? BorderStyle.none
                       : BorderStyle.solid),
-              borderRadius: BorderRadius.circular(radius.value),
+              borderRadius: BorderRadius.circular(fieldRadius.value),
             ),
             child: Row(
               children: <Widget>[
-                prefixIcon != null
-                    ? _buildPrefixIcon(_getTextSize(size))
-                    : const SizedBox(),
+                if (prefixIcon != null)
+                  _buildPrefixIcon(_getTextSize(fieldSize))
+                else
+                  const SizedBox(),
                 Expanded(
                   child: TextField(
                     keyboardType: TextInputType.visiblePassword,
                     controller: controller.value,
                     style: TextStyle(fontSize: textSize),
-                    textCapitalization: TextCapitalization.none,
-                    obscureText: showPassword.value,
+                    obscureText: !showPassword.value,
                     textInputAction: textInputAction,
                     autocorrect: false,
+                    maxLength: maxLength,
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       enabled: !disabled,
+                      counterText: '',
                       hintText: hintText,
                       hintStyle: const TextStyle(color: Colors.grey),
                       contentPadding: const EdgeInsets.symmetric(
@@ -228,8 +252,8 @@ class HMTextField extends HookWidget {
                         constraints: BoxConstraints(minHeight: textSize * 2),
                         child: Icon(
                           showPassword.value
-                              ? Icons.visibility_off
-                              : Icons.visibility,
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                           size: textSize * 1.5,
                           color: Colors.grey,
                         )),
@@ -248,27 +272,24 @@ class HMTextField extends HookWidget {
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: Container(
             decoration: BoxDecoration(
-              color: variant == HMTextVariant.filled
-                  ? fillColor ?? const Color.fromRGBO(236, 238, 239, 1)
-                  : null,
+              color: fieldVariant == HMTextVariant.filled ? background : null,
               border: Border.all(
                   color: outlineColor,
-                  width: 1.0,
-                  style: variant == HMTextVariant.filled
+                  style: fieldVariant == HMTextVariant.filled
                       ? BorderStyle.none
                       : BorderStyle.solid),
-              borderRadius: BorderRadius.circular(radius.value),
+              borderRadius: BorderRadius.circular(fieldRadius.value),
             ),
             child: Row(
               children: <Widget>[
-                prefixIcon != null
-                    ? _buildPrefixIcon(_getTextSize(size))
-                    : const SizedBox(),
+                if (prefixIcon != null)
+                  _buildPrefixIcon(_getTextSize(fieldSize))
+                else
+                  const SizedBox(),
                 Expanded(
                   child: TextField(
                     controller: controller.value,
                     style: TextStyle(fontSize: textSize),
-                    textCapitalization: TextCapitalization.none,
                     textInputAction: textInputAction,
                     keyboardType: TextInputType.number,
                     autocorrect: false,
@@ -291,6 +312,7 @@ class HMTextField extends HookWidget {
                           text: newValue.text.replaceAll(',', '.'),
                         ),
                       ),
+                      ...?inputFormatters,
                     ],
                     onTap: onTap,
                     onChanged: onChange,
@@ -307,22 +329,20 @@ class HMTextField extends HookWidget {
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: Container(
             decoration: BoxDecoration(
-              color: variant == HMTextVariant.filled
-                  ? fillColor ?? const Color.fromRGBO(236, 238, 239, 1)
-                  : null,
+              color: fieldVariant == HMTextVariant.filled ? background : null,
               border: Border.all(
                   color: outlineColor,
-                  width: 1.0,
-                  style: variant == HMTextVariant.filled
+                  style: fieldVariant == HMTextVariant.filled
                       ? BorderStyle.none
                       : BorderStyle.solid),
-              borderRadius: BorderRadius.circular(radius.value),
+              borderRadius: BorderRadius.circular(fieldRadius.value),
             ),
             child: Row(
               children: <Widget>[
-                prefixIcon != null
-                    ? _buildPrefixIcon(_getTextSize(size))
-                    : const SizedBox(),
+                if (prefixIcon != null)
+                  _buildPrefixIcon(_getTextSize(fieldSize))
+                else
+                  const SizedBox(),
                 Expanded(
                   child: TextField(
                     controller: controller.value,
@@ -332,7 +352,7 @@ class HMTextField extends HookWidget {
                     textInputAction: textInputAction,
                     minLines: minLines,
                     maxLines: maxLength,
-                    autocorrect: true,
+                    inputFormatters: inputFormatters,
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: hintText,
@@ -346,9 +366,10 @@ class HMTextField extends HookWidget {
                     onSubmitted: onSubmitted,
                   ),
                 ),
-                suffixIcon != null
-                    ? _buildSuffixIcon(_getTextSize(size))
-                    : Container(),
+                if (suffixIcon != null)
+                  _buildSuffixIcon(_getTextSize(fieldSize))
+                else
+                  Container(),
               ],
             ),
           ),

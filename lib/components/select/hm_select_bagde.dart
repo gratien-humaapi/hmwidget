@@ -1,22 +1,23 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 import '../../type/hm_select_type.dart';
 import '../../utils/constant.dart';
-import '../../utils/hm_raduis.dart';
+import '../../utils/hm_radius.dart';
+import '../../widget_theme.dart';
 
-class HMSelectBadges extends HookWidget {
+class HMSelectBadge extends HookWidget {
   // final SelectBadgesCustomProps customProps;
-  const HMSelectBadges({
+  const HMSelectBadge({
     Key? key,
     this.disabled = false,
     this.hidden = false,
-    this.radius = HMRadius.sm,
+    this.radius,
     this.chipColor,
-    this.borderSide,
-    this.isFilled = false,
-    this.spacing = 10,
+    this.isFilled,
     this.deleteIcon,
     this.textColor,
     this.deleteIconColor,
@@ -28,53 +29,14 @@ class HMSelectBadges extends HookWidget {
   final bool disabled;
   final bool hidden;
   final List<HMSelectedItem> selectedList;
-  final HMRadius radius;
+  final HMRadius? radius;
   final bool showDeleteIcon;
   final Color? chipColor;
-  final void Function(HMSelectedItem) onDeleted;
-  final double spacing;
-  final bool isFilled;
-  final BorderSide? borderSide;
+  final void Function(String deletedValue) onDeleted;
+  final bool? isFilled;
   final Color? textColor;
   final Color? deleteIconColor;
-  final Icon? deleteIcon;
-
-  List<Widget> buildChip(ValueNotifier<List<HMSelectedItem>> selectedItems) {
-    return selectedItems.value.map((item) {
-      final String label = item.label;
-      final Widget avatar = item.avatar;
-      return InputChip(
-        visualDensity: VisualDensity.compact,
-        avatar: avatar,
-        labelPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
-        label: Text(
-          label,
-          overflow: TextOverflow.ellipsis,
-        ),
-        deleteIcon: deleteIcon,
-        deleteIconColor: deleteIconColor ?? Colors.grey[700],
-        backgroundColor: disabled
-            ? outlineColor.withOpacity(0.3)
-            : isFilled
-                ? chipColor
-                : Colors.grey[100],
-        side: BorderSide(
-            width: 1,
-            color: outlineColor,
-            style: isFilled ? BorderStyle.none : BorderStyle.solid),
-        elevation: 0.0,
-        pressElevation: 0.0,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radius.value)),
-        onDeleted: () {
-          List<HMSelectedItem> copy = List.from(selectedItems.value);
-          copy.remove(item);
-          selectedItems.value = copy;
-          onDeleted(item);
-        },
-      );
-    }).toList();
-  }
+  final Widget? deleteIcon;
 
   Widget _styledBox({
     required Widget child,
@@ -82,24 +44,69 @@ class HMSelectBadges extends HookWidget {
       Visibility(visible: !hidden, child: child);
 
   Widget _styledSelectPannel({
-    required ValueNotifier<List<HMSelectedItem>> selectedItems,
+    required bool isFilledBagde,
+    required Color badgeColor,
+    required Color badgeTextColor,
+    required HMRadius badgeRadius,
+    required Color delIconColor,
   }) {
-    return Wrap(
-      direction: Axis.horizontal,
-      spacing: spacing,
-      runSpacing: spacing / 2,
-      children: buildChip(selectedItems),
-    );
+    return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        child: Row(
+          // mainAxisSize: MainAxisSize.min,
+          children: selectedList.map((item) {
+            final Widget label = item.label;
+            return Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: InputChip(
+                visualDensity: VisualDensity.compact,
+                avatar: item.avatar,
+                labelPadding: const EdgeInsets.symmetric(horizontal: 2),
+                label: label,
+                deleteIcon: disabled ? null : deleteIcon,
+                deleteIconColor: delIconColor,
+                disabledColor: Color(0x16000000),
+                backgroundColor:
+                    isFilledBagde ? badgeColor : Colors.transparent,
+                side: BorderSide(
+                    color: outlineColor,
+                    style:
+                        isFilledBagde ? BorderStyle.none : BorderStyle.solid),
+                elevation: 0.0,
+                pressElevation: 0.0,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(badgeRadius.value)),
+                onDeleted: disabled ? null : () => onDeleted(item.value),
+              ),
+            );
+          }).toList(),
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
-    final selectedItems = useState(selectedList);
+    // final selectedItems = useState(selectedList);
+    final selectBagdeTheme = Theme.of(context).extension<HMSelectBagdeTheme>();
+    final HMRadius badgeRadius =
+        radius ?? selectBagdeTheme?.radius ?? HMRadius.xl;
+    final Color badgeColor =
+        chipColor ?? selectBagdeTheme?.chipColor ?? Colors.black26;
+    final bool isFilledBagde = isFilled ?? selectBagdeTheme?.isFilled ?? true;
+    final Color badgeTextColor =
+        textColor ?? selectBagdeTheme?.textColor ?? Colors.black;
+    final Color delIconColor = deleteIconColor ??
+        selectBagdeTheme?.deleteIconColor ??
+        Colors.grey.shade700;
 
     return AbsorbPointer(
         absorbing: disabled,
         child: _styledSelectPannel(
-          selectedItems: selectedItems,
+          badgeRadius: badgeRadius,
+          badgeColor: badgeColor,
+          badgeTextColor: badgeTextColor,
+          isFilledBagde: isFilledBagde,
+          delIconColor: delIconColor,
         ).parent(({required child}) => _styledBox(
               child: child,
             )));
