@@ -94,7 +94,7 @@ class HMTextField extends HookWidget {
   Widget build(BuildContext context) {
     final textFieldTheme = Theme.of(context).extension<HMTextFieldTheme>();
     final background =
-        fillColor ?? textFieldTheme?.fillColor ?? const Color(0xFFE3E3E4);
+        fillColor ?? textFieldTheme?.fillColor ?? Color(0xFFEEEEF0);
     final fieldRadius = radius ?? textFieldTheme?.radius ?? HMRadius.sm;
     final fieldSize = size ?? textFieldTheme?.size ?? HMTextFieldSize.md;
     final fieldVariant =
@@ -155,7 +155,11 @@ class HMTextField extends HookWidget {
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: Container(
             decoration: BoxDecoration(
-              color: fieldVariant == HMTextVariant.filled ? background : null,
+              color: disabled
+                  ? Color(0x16000000)
+                  : fieldVariant == HMTextVariant.filled
+                      ? background
+                      : null,
               border: Border.all(
                   color: outlineColor,
                   style: fieldVariant == HMTextVariant.filled
@@ -207,7 +211,11 @@ class HMTextField extends HookWidget {
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: Container(
             decoration: BoxDecoration(
-              color: fieldVariant == HMTextVariant.filled ? background : null,
+              color: disabled
+                  ? Color(0x16000000)
+                  : fieldVariant == HMTextVariant.filled
+                      ? background
+                      : null,
               border: Border.all(
                   color: outlineColor,
                   style: fieldVariant == HMTextVariant.filled
@@ -272,7 +280,11 @@ class HMTextField extends HookWidget {
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: Container(
             decoration: BoxDecoration(
-              color: fieldVariant == HMTextVariant.filled ? background : null,
+              color: disabled
+                  ? Color(0x16000000)
+                  : fieldVariant == HMTextVariant.filled
+                      ? background
+                      : null,
               border: Border.all(
                   color: outlineColor,
                   style: fieldVariant == HMTextVariant.filled
@@ -329,7 +341,11 @@ class HMTextField extends HookWidget {
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: Container(
             decoration: BoxDecoration(
-              color: fieldVariant == HMTextVariant.filled ? background : null,
+              color: disabled
+                  ? Color(0x16000000)
+                  : fieldVariant == HMTextVariant.filled
+                      ? background
+                      : null,
               border: Border.all(
                   color: outlineColor,
                   style: fieldVariant == HMTextVariant.filled

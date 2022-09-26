@@ -183,6 +183,8 @@ class _MyHomePageState extends State<MyHomePage> {
               width: 200,
               child: HMTextField(
                 textFieldType: HMTextFieldType.password,
+                // disabled: true,
+                variant: HMTextVariant.filled,
                 maxLength: 8,
                 onChange: (val) => print(val),
               ),
