@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:styled_widget/styled_widget.dart';
 
-import '../../utils/constant.dart';
 import '../../size/hm_select_size.dart';
+import '../../utils/constant.dart';
 import '../../utils/hm_radius.dart';
 import '../../widget_theme.dart';
 
@@ -14,8 +14,6 @@ class HMMultiSelect extends HookWidget {
       this.boxRadius,
       required this.selectedValueList,
       this.textColor,
-      this.separatorLineColor,
-      this.separatorLineHeight,
       this.selectIcon,
       required this.selectList,
       this.size,
@@ -33,8 +31,6 @@ class HMMultiSelect extends HookWidget {
   final Widget? divider;
   final Color? selectIconColor;
   final Color? textColor;
-  final Color? separatorLineColor;
-  final double? separatorLineHeight;
   final List selectedValueList;
   final List selectList;
 
@@ -94,11 +90,14 @@ class HMMultiSelect extends HookWidget {
           final bool isSelected = valueList.contains(selectList[index]);
 
           final List<Widget> children = [
-            Text(
-              '${selectList[index]}',
-              style: TextStyle(
-                fontSize: _getTextSize(selectSize),
-                color: disabled ? Colors.grey : selectTextColor,
+            Padding(
+              padding: EdgeInsets.only(left: iconAtLeft ? 0.0 : 20),
+              child: Text(
+                '${selectList[index]}',
+                style: TextStyle(
+                  fontSize: _getTextSize(selectSize),
+                  color: disabled ? Colors.grey : selectTextColor,
+                ),
               ),
             ),
             SizedBox(
@@ -116,10 +115,12 @@ class HMMultiSelect extends HookWidget {
           return GestureDetector(
             onTap: () {
               if (isSelected) {
-                valueList.remove(selectList[index]);
+                List list = List.from(valueList);
+                list.remove(selectList[index]);
+                valueList = list;
                 onChanged(valueList);
               } else {
-                valueList.add(selectList[index]);
+                valueList = [...valueList, selectList[index]];
                 onChanged(valueList);
               }
             },

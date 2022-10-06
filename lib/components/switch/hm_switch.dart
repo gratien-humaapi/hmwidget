@@ -17,6 +17,7 @@ class HMSwitch extends HookWidget {
     this.onLabel,
     this.offLabel,
     this.label,
+    this.borderColor,
     this.iconOn,
     this.iconOff,
     this.color,
@@ -35,6 +36,7 @@ class HMSwitch extends HookWidget {
   final Widget? iconOn;
   final Widget? iconOff;
   final Color? color;
+  final Color? borderColor;
   final HMSwitchSize? size;
   final HMRadius? radius;
   final bool value;
@@ -53,8 +55,8 @@ class HMSwitch extends HookWidget {
       Visibility(
           visible: !hidden,
           child: Container(
-            color: Colors.transparent,
-            height: getTrackSize(switchSize),
+            // color: Colors.transparent,
+            // height: getTrackSize(switchSize),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -88,6 +90,11 @@ class HMSwitch extends HookWidget {
       child: Container(
         decoration: BoxDecoration(
             color: value ? switchColor : const Color.fromRGBO(228, 229, 230, 1),
+            border: Border.all(
+                color: borderColor ?? Colors.transparent,
+                strokeAlign: StrokeAlign.outside,
+                style:
+                    borderColor != null ? BorderStyle.solid : BorderStyle.none),
             borderRadius:
                 BorderRadius.all(Radius.circular(switchRadius.value))),
         child: Stack(
@@ -147,7 +154,17 @@ class HMSwitch extends HookWidget {
                 : Colors.white,
           ),
           child: Center(
-            child: value ? iconOn : iconOff,
+            child: IconTheme(
+              data: IconThemeData(
+                color: disabled
+                    ? const Color.fromARGB(255, 181, 183, 186)
+                    : value
+                        ? switchColor
+                        : Colors.grey[400],
+                size: (switchSize.value * 60) / 100,
+              ),
+              child: value ? iconOn ?? Container() : iconOff ?? Container(),
+            ),
             // color: disabled
             //     ? const Color.fromARGB(255, 181, 183, 186)
             //     : isOn.value

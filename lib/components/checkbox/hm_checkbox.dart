@@ -17,6 +17,7 @@ class HMCheckBox extends HookWidget {
     this.disabled = false,
     this.hidden = false,
     this.radius,
+    this.borderColor,
     this.size,
     required this.value,
     this.color,
@@ -27,6 +28,7 @@ class HMCheckBox extends HookWidget {
   final String? label;
   final bool value;
   final Color? color;
+  final Color? borderColor;
   final HMRadius? radius;
   final HMCheckBoxSize? size;
   final void Function(bool) onChange;
@@ -56,8 +58,7 @@ class HMCheckBox extends HookWidget {
             borderRadius: BorderRadius.circular(checkBoxRadius.value),
             border: value
                 ? null
-                : Border.all(
-                    color: const Color.fromRGBO(177, 183, 189, 1), width: 2),
+                : Border.all(color: borderColor ?? outlineColor, width: 2),
           ),
           child: Center(
               child: ScaleTransition(

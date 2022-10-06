@@ -2,6 +2,7 @@ library hmwidget;
 
 export 'package:camera/camera.dart';
 export 'package:file_picker/file_picker.dart';
+export 'package:image_picker/image_picker.dart';
 
 export 'package:hmwidget/components/autocomplete/hm_autocomplete.dart';
 export 'package:hmwidget/components/button/hm_button.dart';

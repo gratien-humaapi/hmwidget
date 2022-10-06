@@ -21,10 +21,8 @@ class HMRadio extends HookWidget {
       required this.value,
       this.isLeft,
       this.boxRadius,
-      this.border,
       this.textColor,
-      this.separatorLineColor,
-      this.separatorLineHeight,
+      this.divider,
       this.radioColor,
       required this.onChanged,
       Key? key})
@@ -35,8 +33,7 @@ class HMRadio extends HookWidget {
   final HMRadioSize? size;
   final Color? radioColor;
   final Color? textColor;
-  final Color? separatorLineColor;
-  final double? separatorLineHeight;
+  final Widget? divider;
 
   /// The position of the icon on the line
   ///`"true"` to put the icon before the title
@@ -45,7 +42,6 @@ class HMRadio extends HookWidget {
   final String value;
   final List radioList;
   final HMRadius? boxRadius;
-  final Border? border;
   final void Function(dynamic value) onChanged;
 
   double _getTextSize(HMRadioSize size) {
@@ -71,7 +67,7 @@ class HMRadio extends HookWidget {
           visible: !hidden,
           child: Container(
               decoration: BoxDecoration(
-                  border: border ?? Border.all(color: outlineColor),
+                  border: Border.all(color: outlineColor),
                   borderRadius: BorderRadius.circular(radioRadius)),
               child: child));
 
@@ -81,30 +77,32 @@ class HMRadio extends HookWidget {
     required Color radioTextColor,
     required Color color,
     required bool iconAtLeft,
-    required Object separatorColor,
-    required double separatorHeight,
   }) {
     return ListView.separated(
       padding: EdgeInsets.zero,
       itemCount: radioList.length,
       shrinkWrap: true,
       separatorBuilder: (BuildContext context, sIndex) {
-        return Divider(
-          height: separatorHeight,
-          indent: 0.0,
-          endIndent: 0.0,
-          thickness: separatorHeight,
-          // color: Colors.black,
-        );
+        return divider ??
+            Divider(
+              height: 1,
+              indent: 0.0,
+              endIndent: 0.0,
+              thickness: 1,
+              color: outlineColor,
+            );
       },
       itemBuilder: (context, index) {
         final bool isSelected = value == radioList[index];
         List<Widget> children = [
-          Text(
-            '${radioList[index]}',
-            style: TextStyle(
-              fontSize: _getTextSize(radioSize),
-              color: disabled ? Colors.grey : radioTextColor,
+          Padding(
+            padding: EdgeInsets.only(left: iconAtLeft ? 0.0 : 20),
+            child: Text(
+              '${radioList[index]}',
+              style: TextStyle(
+                fontSize: _getTextSize(radioSize),
+                color: disabled ? Colors.grey : radioTextColor,
+              ),
             ),
           ),
           Padding(
@@ -150,10 +148,6 @@ class HMRadio extends HookWidget {
         const Color.fromRGBO(121, 80, 242, 1);
     final radioTextColor = textColor ?? radioTheme?.textColor ?? Colors.black;
     final iconAtLeft = isLeft ?? radioTheme?.isLeft ?? true;
-    final separatorHeight =
-        separatorLineHeight ?? radioTheme?.separatorLineHeight ?? 1;
-    final separatorColor =
-        separatorLineColor ?? radioTheme?.separatorLineColor ?? outlineColor;
 
     return AbsorbPointer(
         absorbing: disabled,
@@ -161,8 +155,6 @@ class HMRadio extends HookWidget {
           radioRadius: radioRadius,
           radioSize: radioSize,
           color: color,
-          separatorColor: separatorColor,
-          separatorHeight: separatorHeight,
           radioTextColor: radioTextColor,
           iconAtLeft: iconAtLeft,
         ).parent(({required child}) => _styledBox(

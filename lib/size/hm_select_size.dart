@@ -1,9 +1,9 @@
 //
 
 enum HMSelectSize {
-  xs(20),
-  sm(30),
-  md(40),
+  xs(30),
+  sm(36),
+  md(42),
   lg(50),
   xl(60);
 

@@ -56,7 +56,7 @@ class HMIconButton extends HookWidget {
               : Color.alphaBlend(
                   variant == HMButtonVariant.filled
                       ? Colors.black.withOpacity(isPressed ? 0.1 : 0.0)
-                      : buttonIconColor,
+                      : buttonIconColor.withOpacity(isPressed ? 0.1 : 0.0),
                   variant == HMButtonVariant.filled
                       ? buttonColor
                       : Colors.transparent),

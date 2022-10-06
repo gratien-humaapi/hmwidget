@@ -11,6 +11,7 @@ class ActionSheetItem {
 Future<dynamic> showActionSheet(
     {required BuildContext context,
     required List<ActionSheetItem> actions,
+    Widget? cancelButton,
     bool hasCancelButton = true}) {
   // print(actions);
   return showCupertinoModalPopup(
@@ -35,12 +36,15 @@ Future<dynamic> showActionSheet(
                 ),
               )
               .toList(),
-          cancelButton: CupertinoActionSheetAction(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Cancel'),
-          ),
+          cancelButton: hasCancelButton
+              ? cancelButton ??
+                  CupertinoActionSheetAction(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Cancel'),
+                  )
+              : const SizedBox(),
         );
       });
 }

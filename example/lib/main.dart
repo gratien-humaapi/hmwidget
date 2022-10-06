@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
                 radius: HMRadius.sm,
                 size: HMCheckBoxSize.md),
             HMTextFieldTheme(
-                fillColor: Colors.greenAccent.withOpacity(0.4),
+                // fillColor: Colors.greenAccent.withOpacity(0.4),
                 radius: HMRadius.md,
                 variant: HMTextVariant.outlined),
             HMSliderTheme(
@@ -98,7 +98,20 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             HMSelect(
               value: select,
-              selectList: const ["Flutter", 'React', 'Svelte', 'Vue', 'Python'],
+              selectionPageTitle: const Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.all(15.0),
+                  child: Text('Select a Framework'),
+                ),
+              ),
+              selectList: const [
+                "Flutter",
+                'React',
+                'Svelte',
+                'Vue',
+                'Angular'
+              ],
               onChanged: (value) {
                 setState(() {
                   select = value;
@@ -156,6 +169,9 @@ class _MyHomePageState extends State<MyHomePage> {
               onSelected: (value) {
                 print(value);
               },
+            ),
+            HMTextField(
+              size: HMTextFieldSize.md,
             ),
 
             HMSwitch(
