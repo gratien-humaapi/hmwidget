@@ -18,6 +18,8 @@ class HMTextField extends HookWidget {
     this.hintText,
     this.controller,
     this.value,
+    this.showPasswordIcon,
+    this.hidePasswordIcon,
     this.focusNode,
     this.iconColor,
     this.maxLength,
@@ -56,6 +58,8 @@ class HMTextField extends HookWidget {
   final List<TextInputFormatter>? inputFormatters;
   final IconData? prefixIcon;
   final IconData? suffixIcon;
+  final IconData? hidePasswordIcon;
+  final IconData? showPasswordIcon;
 
   final void Function()? onTap;
   final void Function(String value)? onChange;
@@ -279,8 +283,8 @@ class HMTextField extends HookWidget {
                       constraints: BoxConstraints(minHeight: textSize * 2),
                       child: Icon(
                         showPassword.value
-                            ? Icons.visibility_off
-                            : Icons.visibility,
+                            ? hidePasswordIcon ?? Icons.visibility_off
+                            : showPasswordIcon ?? Icons.visibility,
                         size: textSize * 1.5,
                         color: Colors.grey,
                       )),

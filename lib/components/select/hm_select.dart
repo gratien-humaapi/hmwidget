@@ -13,15 +13,18 @@ class HMSelect extends HookWidget {
     this.disabled = false,
     this.hidden = false,
     required this.value,
-    this.boxRadius,
-    this.divider,
-    this.textColor,
+    this.radius,
     this.selectIcon,
+    this.isModalView = true,
     required this.selectList,
+    this.selectedValueTextStyle,
     this.size,
+    this.selectItemStyle,
     required this.selectionPageTitle,
     this.selectIconColor,
-    this.isLeft,
+    this.selectedBgColor,
+    this.selectPanelDecoration,
+    this.selectIconAtLeft,
     required this.onChanged,
     super.key,
   });
@@ -29,19 +32,22 @@ class HMSelect extends HookWidget {
   final bool disabled;
   final bool hidden;
   final HMSelectSize? size;
-  final HMRadius? boxRadius;
+  final HMRadius? radius;
   final Widget? selectIcon;
-  final Widget? divider;
+  final TextStyle? selectItemStyle;
+  final BoxDecoration? selectPanelDecoration;
+  final TextStyle? selectedValueTextStyle;
+  final bool isModalView;
   final Color? selectIconColor;
+  final Color? selectedBgColor;
   final Widget selectionPageTitle;
-  final Color? textColor;
   final dynamic value;
   final List selectList;
 
-  /// The position of the icon on the line
+  /// The position of the selectIcon on the line
   ///`"true"` to put the icon before the title
   ///and `"false"`to put the icon to end.
-  final bool? isLeft;
+  final bool? selectIconAtLeft;
   final void Function(dynamic value) onChanged;
 
   double _getTextSize(HMSelectSize size) {
@@ -68,30 +74,18 @@ class HMSelect extends HookWidget {
     required HMSelectSize selectSize,
     required HMRadius selectBoxRadius,
     required Color selectColor,
-    required Color selectTextColor,
     required bool iconAtLeft,
   }) {
     return Column(
       children: [
         selectionPageTitle,
+        Divider(color: outlineColor, height: 1),
         Container(
-          decoration: BoxDecoration(
-              border: Border.all(color: outlineColor),
-              borderRadius: BorderRadius.circular(selectBoxRadius.value)),
-          child: ListView.separated(
+          child: ListView.builder(
             padding: EdgeInsets.zero,
             physics: NeverScrollableScrollPhysics(),
             itemCount: selectList.length,
             shrinkWrap: true,
-            separatorBuilder: (BuildContext context, int sIndex) {
-              return divider ??
-                  Divider(
-                      height: 1,
-                      indent: 0.0,
-                      endIndent: 0.0,
-                      thickness: 1,
-                      color: outlineColor);
-            },
             itemBuilder: (BuildContext context, int index) {
               final bool isSelected = value == selectList[index];
               final List<Widget> children = [
@@ -99,10 +93,10 @@ class HMSelect extends HookWidget {
                   padding: EdgeInsets.only(left: iconAtLeft ? 0.0 : 20),
                   child: Text(
                     '${selectList[index]}',
-                    style: TextStyle(
-                      fontSize: _getTextSize(selectSize),
-                      color: disabled ? Colors.grey : textColor,
-                    ),
+                    style: selectItemStyle ??
+                        TextStyle(
+                          fontSize: _getTextSize(selectSize),
+                        ),
                   ),
                 ),
                 SizedBox(
@@ -129,7 +123,7 @@ class HMSelect extends HookWidget {
                   height: _getTextSize(selectSize) * 3,
                   // padding: const EdgeInsets.only(left: 20.0),
                   decoration: BoxDecoration(
-                      color: disabled ? outlineColor.withOpacity(0.2) : null),
+                      color: isSelected ? Colors.grey.shade200 : null),
                   child: Row(
                     mainAxisAlignment: iconAtLeft
                         ? MainAxisAlignment.start
@@ -152,12 +146,11 @@ class HMSelect extends HookWidget {
     final HMSelectSize selectSize =
         size ?? selectTheme?.size ?? HMSelectSize.md;
     final HMRadius selectBoxRadius =
-        boxRadius ?? selectTheme?.boxRadius ?? HMRadius.md;
-    final iconAtLeft = isLeft ?? selectTheme?.isLeft ?? true;
+        radius ?? selectTheme?.radius ?? HMRadius.md;
+    final iconAtLeft =
+        selectIconAtLeft ?? selectTheme?.selectIconAtLeft ?? false;
     final Color selectColor =
         selectIconColor ?? selectTheme?.selectIconColor ?? defaultColor;
-    final Color selectTextColor =
-        textColor ?? selectTheme?.textColor ?? Colors.black;
 
     return AbsorbPointer(
       absorbing: disabled,
@@ -167,19 +160,28 @@ class HMSelect extends HookWidget {
             selectSize: selectSize,
             selectBoxRadius: selectBoxRadius,
             selectColor: selectColor,
-            selectTextColor: selectTextColor,
             iconAtLeft: iconAtLeft,
           ).parent(({required child}) => _styledBox(
                 child: child,
               ));
         },
-        isModal: true,
+        isModal: isModalView,
         child: Container(
-          decoration: BoxDecoration(color: Colors.grey.shade300),
+          decoration: selectPanelDecoration ??
+              BoxDecoration(
+                  color: selectedBgColor ?? Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(selectBoxRadius.value)),
           height: selectSize.value,
           child: Row(
             children: [
-              Expanded(child: Text('${value}')),
+              Expanded(
+                  child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Text(
+                  '${value}',
+                  style: selectedValueTextStyle,
+                ),
+              )),
               Icon(
                 Icons.arrow_drop_down_rounded,
                 size: selectSize.value,

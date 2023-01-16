@@ -285,45 +285,32 @@ class HMRadioTheme extends ThemeExtension<HMRadioTheme> {
 class HMSelectTheme extends ThemeExtension<HMSelectTheme> {
   HMSelectTheme({
     this.size,
-    this.boxRadius,
-    this.isLeft,
+    this.radius,
+    this.selectIconAtLeft,
     this.selectIconColor,
-    this.separatorLineColor,
-    this.separatorLineHeight,
-    this.textColor,
   });
 
   final HMSelectSize? size;
   final Color? selectIconColor;
-  final Color? textColor;
-  final Color? separatorLineColor;
-  final double? separatorLineHeight;
 
   /// The position of the icon on the line
   ///`"true"` to put the icon before the title
   ///and `"false"`to put the icon to end.
-  final bool? isLeft;
-  final HMRadius? boxRadius;
+  final bool? selectIconAtLeft;
+  final HMRadius? radius;
 
   @override
   HMSelectTheme copyWith({
     HMSelectSize? size,
     Color? selectIconColor,
-    Color? textColor,
-    Color? separatorLineColor,
-    double? separatorLineHeight,
-    bool? isLeft,
-    HMRadius? boxRadius,
-    Border? border,
+    bool? selectIconAtLeft,
+    HMRadius? radius,
   }) {
     return HMSelectTheme(
       selectIconColor: selectIconColor ?? this.selectIconColor,
-      textColor: textColor ?? this.textColor,
-      separatorLineColor: separatorLineColor ?? this.separatorLineColor,
-      boxRadius: boxRadius ?? this.boxRadius,
-      isLeft: isLeft ?? this.isLeft,
+      radius: radius ?? this.radius,
+      selectIconAtLeft: selectIconAtLeft ?? this.selectIconAtLeft,
       size: size ?? this.size,
-      separatorLineHeight: separatorLineHeight ?? this.separatorLineHeight,
     );
   }
 
@@ -334,64 +321,47 @@ class HMSelectTheme extends ThemeExtension<HMSelectTheme> {
     }
     return HMSelectTheme(
       selectIconColor: Color.lerp(selectIconColor, other.selectIconColor, t),
-      textColor: Color.lerp(textColor, other.textColor, t),
-      separatorLineColor:
-          Color.lerp(separatorLineColor, other.separatorLineColor, t),
-      isLeft: other.isLeft,
-      boxRadius: other.boxRadius,
+      selectIconAtLeft: other.selectIconAtLeft,
+      radius: other.radius,
       size: other.size,
-      separatorLineHeight: other.separatorLineHeight,
     );
   }
 
   // Optional
   @override
   String toString() =>
-      'HMSelectTheme(selectIconColor: $selectIconColor, textColor: $textColor, separatorLineColor: $separatorLineColor, isLeft: $isLeft, boxRadius: $boxRadius, size: $size, separatorLineHeight: $separatorLineHeight)';
+      'HMSelectTheme(selectIconColor: $selectIconColor, selectIconAtLeft: $selectIconAtLeft, radius: $radius, size: $size)';
 }
 
 class HMMultiSelectTheme extends ThemeExtension<HMMultiSelectTheme> {
   HMMultiSelectTheme({
     this.size,
-    this.boxRadius,
-    this.isLeft,
+    this.radius,
+    this.selectIconAtLeft,
     this.selectIconColor,
-    this.separatorLineColor,
-    this.separatorLineHeight,
-    this.textColor,
   });
 
   final HMSelectSize? size;
   final Color? selectIconColor;
-  final Color? textColor;
-  final Color? separatorLineColor;
-  final double? separatorLineHeight;
 
   /// The position of the icon on the line
   ///`"true"` to put the icon before the title
   ///and `"false"`to put the icon to end.
-  final bool? isLeft;
-  final HMRadius? boxRadius;
+  final bool? selectIconAtLeft;
+  final HMRadius? radius;
 
   @override
   HMMultiSelectTheme copyWith({
     HMSelectSize? size,
     Color? selectIconColor,
-    Color? textColor,
-    Color? separatorLineColor,
-    double? separatorLineHeight,
-    bool? isLeft,
-    HMRadius? boxRadius,
-    Border? border,
+    bool? selectIconAtLeft,
+    HMRadius? radius,
   }) {
     return HMMultiSelectTheme(
       selectIconColor: selectIconColor ?? this.selectIconColor,
-      textColor: textColor ?? this.textColor,
-      separatorLineColor: separatorLineColor ?? this.separatorLineColor,
-      boxRadius: boxRadius ?? this.boxRadius,
-      isLeft: isLeft ?? this.isLeft,
+      radius: radius ?? this.radius,
+      selectIconAtLeft: selectIconAtLeft ?? this.selectIconAtLeft,
       size: size ?? this.size,
-      separatorLineHeight: separatorLineHeight ?? this.separatorLineHeight,
     );
   }
 
@@ -402,20 +372,16 @@ class HMMultiSelectTheme extends ThemeExtension<HMMultiSelectTheme> {
     }
     return HMMultiSelectTheme(
       selectIconColor: Color.lerp(selectIconColor, other.selectIconColor, t),
-      textColor: Color.lerp(textColor, other.textColor, t),
-      separatorLineColor:
-          Color.lerp(separatorLineColor, other.separatorLineColor, t),
-      isLeft: other.isLeft,
-      boxRadius: other.boxRadius,
+      selectIconAtLeft: other.selectIconAtLeft,
+      radius: other.radius,
       size: other.size,
-      separatorLineHeight: other.separatorLineHeight,
     );
   }
 
   // Optional
   @override
   String toString() =>
-      'HMMultiSelectTheme(selectIconColor: $selectIconColor, textColor: $textColor, separatorLineColor: $separatorLineColor, isLeft: $isLeft, boxRadius: $boxRadius, size: $size, separatorLineHeight: $separatorLineHeight)';
+      'HMMultiSelectTheme(selectIconColor: $selectIconColor, selectIconAtLeft: $selectIconAtLeft, radius: $radius, size: $size)';
 }
 
 class HMSelectBagdeTheme extends ThemeExtension<HMSelectBagdeTheme> {

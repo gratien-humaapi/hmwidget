@@ -78,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Column(
           children: [
-            ElevatedButton(onPressed: () {}, child: Text("Open")),
+            // ElevatedButton(onPressed: () {}, child: Text("Open"), ),
             HMIconButton(
                 icon: const Icon(Icons.edit_calendar_sharp), onPressed: () {}),
             SizedBox(
@@ -105,6 +105,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Text('Select a Framework'),
                 ),
               ),
+              // selectIconAtLeft: false,
+              // selectItemStyle: TextStyle(fontSize: 20),
               selectList: const [
                 "Flutter",
                 'React',
@@ -143,7 +145,20 @@ class _MyHomePageState extends State<MyHomePage> {
                 }),
 
             HMMultiSelect(
-              selectList: const ["Flutter", 'React', 'Svelte', 'Vue', 'Python'],
+              selectionPageTitle: const Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.all(15.0),
+                  child: Text('Select a Framework'),
+                ),
+              ),
+              selectListItem: const [
+                "Flutter",
+                'React',
+                'Svelte',
+                'Vue',
+                'Python'
+              ],
               onChanged: (value) {
                 setState(() {
                   choix = value;

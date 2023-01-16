@@ -66,7 +66,7 @@ class HMSelectBadge extends HookWidget {
                 label: label,
                 deleteIcon: disabled ? null : deleteIcon,
                 deleteIconColor: delIconColor,
-                disabledColor: Color(0x16000000),
+                disabledColor: const Color(0x16000000),
                 backgroundColor:
                     isFilledBagde ? badgeColor : Colors.transparent,
                 side: BorderSide(

@@ -85,9 +85,7 @@ class DetailsPage<T> extends HookWidget {
       },
       child: Material(
         color: Colors.transparent,
-        child: AbsorbPointer(
-          child: child,
-        ),
+        child: child,
       ),
     );
   }

@@ -67,13 +67,16 @@ class HMButton extends HookWidget {
         .decorated(
           color: disabled
               ? const Color.fromRGBO(228, 229, 230, 1)
-              : Color.alphaBlend(
-                  variant == HMButtonVariant.filled
-                      ? Colors.black.withOpacity(isPressed ? 0.2 : 0.0)
-                      : buttonTextColor.withOpacity(isPressed ? 0.2 : 0.0),
-                  variant == HMButtonVariant.filled
-                      ? buttonColor
-                      : Colors.transparent),
+              : variant == HMButtonVariant.filled
+                  ? buttonColor
+                  : Colors.transparent,
+          // Color.alphaBlend(
+          //     variant == HMButtonVariant.filled
+          //         ? Colors.black.withOpacity(isPressed ? 0.1 : 0.0)
+          //         : buttonTextColor.withOpacity(isPressed ? 0.1 : 0.0),
+          //     variant == HMButtonVariant.filled
+          //         ? buttonColor
+          //         : Colors.transparent),
           border: variant == HMButtonVariant.outlined
               ? Border.all(
                   color: buttonTextColor,
@@ -95,12 +98,16 @@ class HMButton extends HookWidget {
           required HMButtonTheme? buttonTheme}) =>
       Visibility(
         visible: !hidden,
-        child: variant == HMButtonVariant.filled
-            ? child.padding(all: 3).decorated(
-                border:
-                    isPressed ? Border.all(color: buttonColor, width: 2) : null,
-                borderRadius: BorderRadius.circular(buttonRadius * 1.2))
-            : child,
+        child: Padding(
+          padding: const EdgeInsets.all(3.0),
+          child: variant == HMButtonVariant.filled
+              ? child.decorated(
+                  border: isPressed
+                      ? Border.all(color: buttonColor, width: 2)
+                      : null,
+                  borderRadius: BorderRadius.circular(buttonRadius * 1.2))
+              : child,
+        ),
       );
 
   // The content of the button
@@ -122,20 +129,36 @@ class HMButton extends HookWidget {
               colorFilter: ColorFilter.mode(
                   const Color(0xFFADB5BD).withOpacity(disabled ? 1 : 0.0),
                   BlendMode.srcATop),
-              child: icon,
+              child: IconTheme(
+                  data: IconThemeData(
+                    size: getTextSize(buttonSize) * 1.5,
+                    color: disabled
+                        ? const Color(0xFFADB5BD)
+                        : variant == HMButtonVariant.filled
+                            ? textColor ??
+                                buttonTheme?.textColor ??
+                                checkColor(buttonColor)
+                            : buttonTextColor,
+                  ),
+                  child: icon),
             )
             // Icon(icon,
             //     buttonSize: getIconSize(buttonSize),
-            //     color: disabled
-            //         ? const Color.fromRGBO(173, 181, 189, 1.0)
-            //         : buttonTheme?.textColor
-            //                 ?.withOpacity(isPressed ? 0.5 : 1.0) ??
-            //             textColor!.withOpacity(isPressed ? 0.5 : 1.0)),
+            // color: disabled
+            //     ? const Color.fromRGBO(173, 181, 189, 1.0)
+            //     : buttonTheme?.textColor
+            //             ?.withOpacity(isPressed ? 0.5 : 1.0) ??
+            //         textColor!.withOpacity(isPressed ? 0.5 : 1.0)),
             ),
       Container(
         margin: EdgeInsets.symmetric(horizontal: buttonSize.value * 0.1),
-        child: Text(text)
+        child: Text(
+          text,
+          overflow: TextOverflow.ellipsis,
+        )
             .fontSize(getTextSize(buttonSize))
+            .letterSpacing(0.5)
+            .fontWeight(FontWeight.w500)
             .textColor(
               disabled
                   ? const Color(0xFFADB5BD)
@@ -173,42 +196,45 @@ class HMButton extends HookWidget {
     final ValueNotifier<bool> isPressed = useState(false);
     return AbsorbPointer(
       absorbing: disabled,
-      child: _styledInnerContent(
-              text: content,
-              isPressed: isPressed.value,
-              icon: icon,
-              buttonSize: buttonSize,
-              buttonTextColor: buttonTextColor,
-              buttonColor: buttonColor,
-              variant: variant,
-              buttonRadius: buttonRadius,
-              buttonTheme: buttonTheme)
-          .parent(({required Widget child}) => _styledBox(
-              child: child,
-              isPressed: isPressed.value,
-              variant: variant,
-              buttonTextColor: buttonTextColor,
-              buttonColor: buttonColor,
-              buttonRadius: buttonRadius,
-              buttonSize: buttonSize,
-              buttonTheme: buttonTheme))
-          .parent(({required Widget child}) => _outlinedBorder(
-              child: child,
-              buttonRadius: buttonRadius,
-              buttonSize: buttonSize,
-              variant: variant,
-              buttonTextColor: buttonTextColor,
-              buttonColor: buttonColor,
-              isPressed: isPressed.value,
-              buttonTheme: buttonTheme))
-          .gestures(
-            onTap: () {
-              onPressed();
-            },
-            onTapDown: (TapDownDetails details) => isPressed.value = true,
-            onTapUp: (TapUpDetails details) => isPressed.value = false,
-            onTapCancel: () => isPressed.value = false,
-          ),
+      child: Opacity(
+        opacity: isPressed.value ? 0.5 : 1.0,
+        child: _styledInnerContent(
+                text: content,
+                isPressed: isPressed.value,
+                icon: icon,
+                buttonSize: buttonSize,
+                buttonTextColor: buttonTextColor,
+                buttonColor: buttonColor,
+                variant: variant,
+                buttonRadius: buttonRadius,
+                buttonTheme: buttonTheme)
+            .parent(({required Widget child}) => _styledBox(
+                child: child,
+                isPressed: isPressed.value,
+                variant: variant,
+                buttonTextColor: buttonTextColor,
+                buttonColor: buttonColor,
+                buttonRadius: buttonRadius,
+                buttonSize: buttonSize,
+                buttonTheme: buttonTheme))
+            .parent(({required Widget child}) => _outlinedBorder(
+                child: child,
+                buttonRadius: buttonRadius,
+                buttonSize: buttonSize,
+                variant: variant,
+                buttonTextColor: buttonTextColor,
+                buttonColor: buttonColor,
+                isPressed: isPressed.value,
+                buttonTheme: buttonTheme))
+            .gestures(
+              onTap: () {
+                onPressed();
+              },
+              onTapDown: (TapDownDetails details) => isPressed.value = true,
+              onTapUp: (TapUpDetails details) => isPressed.value = false,
+              onTapCancel: () => isPressed.value = false,
+            ),
+      ),
     );
   }
 }
