@@ -1,9 +1,9 @@
-import "dart:math" as math;
-import "package:flutter/material.dart";
+import 'dart:math' as math;
+import 'package:flutter/material.dart';
 
 class RangeSliderTrack extends RangeSliderTrackShape {
-  double radius;
   RangeSliderTrack({required this.radius});
+  double radius;
   double extraSpace = 0.0;
   @override
   Rect getPreferredRect({

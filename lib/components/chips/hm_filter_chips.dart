@@ -21,8 +21,7 @@ class HMFilterChips extends HookWidget {
       this.backgroundColor,
       this.showCheckmark = true,
       required this.onSelected,
-      Key? key})
-      : super(key: key);
+      super.key});
   final bool disabled;
   final bool hidden;
   final HMRadius? radius;

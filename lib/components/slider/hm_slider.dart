@@ -15,8 +15,8 @@ import '../../widget_theme.dart';
 
 class HMSlider extends HookWidget {
   // final SliderCustomProps customProps;
-  HMSlider({
-    Key? key,
+  const HMSlider({
+    super.key,
     this.disabled = false,
     this.hidden = false,
     this.marks,
@@ -28,7 +28,7 @@ class HMSlider extends HookWidget {
     this.radius,
     this.size,
     required this.onChange,
-  }) : super(key: key);
+  });
   final bool disabled;
   final bool hidden;
   final List<HMSliderMark>? marks;
@@ -173,7 +173,6 @@ class HMSlider extends HookWidget {
           child: SliderTheme(
             data: sliderThemeData,
             child: Slider(
-              min: 0.0,
               max: marks.length - 1.0,
               value: sliderVal.value.toDouble(),
               divisions: marks.length - 1,
@@ -200,7 +199,7 @@ class HMSlider extends HookWidget {
                 angle: sliderOrientation == HMOrientation.horizontal
                     ? 0
                     : math.pi / 2,
-                child: Container(
+                child: SizedBox(
                     // color: Colors.amber,
                     width: 40,
                     child: Text(

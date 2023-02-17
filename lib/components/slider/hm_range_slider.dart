@@ -1,11 +1,13 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hmwidget/size/hm_slider_size.dart';
-import 'package:hmwidget/theme/slider_theme_data/range_slider_thunb_shape.dart';
-import 'package:hmwidget/theme/slider_theme_data/range_slider_track.dart';
-import 'package:hmwidget/theme/slider_theme_data/range_value_indicator.dart';
 import 'package:styled_widget/styled_widget.dart';
-import 'dart:math' as math;
+
+import '../../size/hm_slider_size.dart';
+import '../../theme/slider_theme_data/range_slider_thunb_shape.dart';
+import '../../theme/slider_theme_data/range_slider_track.dart';
+import '../../theme/slider_theme_data/range_value_indicator.dart';
 import '../../type/hm_slider_type.dart';
 import '../../utils/constant.dart';
 import '../../utils/hm_radius.dart';
@@ -13,8 +15,8 @@ import '../../widget_theme.dart';
 
 class HMRangeSlider extends HookWidget {
   // final SliderCustomProps customProps;
-  HMRangeSlider({
-    Key? key,
+  const HMRangeSlider({
+    super.key,
     this.disabled = false,
     this.hidden = false,
     this.marks,
@@ -26,7 +28,7 @@ class HMRangeSlider extends HookWidget {
     this.radius,
     this.size,
     required this.onChange,
-  }) : super(key: key);
+  });
   final bool disabled;
   final bool hidden;
   final List<HMSliderMark>? marks;
@@ -136,8 +138,8 @@ class HMRangeSlider extends HookWidget {
 
   Widget getRangeSlider(ValueNotifier<RangeValues> rangeValues,
       SliderThemeData sliderThemeData, double sliderSize) {
-    var max = rangeMaxValue;
-    var min = rangeMinValue;
+    final max = rangeMaxValue;
+    final min = rangeMinValue;
     return Container(
       height: sliderSize + 5,
       margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -187,7 +189,6 @@ class HMRangeSlider extends HookWidget {
             data: sliderThemeData,
             child: RangeSlider(
               values: range.value,
-              min: 0.0,
               max: marks.length - 1.0,
               divisions: marks.length - 1,
               labels: RangeLabels('${marks[range.value.start.toInt()].label}',

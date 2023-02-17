@@ -3,9 +3,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 class HMAutocomplete extends HookWidget {
-  final ValueNotifier value;
   const HMAutocomplete(
-      {Key? key,
+      {super.key,
       this.disabled = false,
       this.hidden = false,
       required this.optionsBuilder,
@@ -13,8 +12,8 @@ class HMAutocomplete extends HookWidget {
       this.fieldViewBuilder,
       this.initialValue,
       this.onSelected,
-      required this.value})
-      : super(key: key);
+      required this.value});
+  final ValueNotifier value;
   final bool disabled;
   final bool hidden;
   final List Function(String value) optionsBuilder;
@@ -93,7 +92,7 @@ class HMAutocomplete extends HookWidget {
       title: Container(
         height: 45,
         decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey[400]!, width: 1),
+            border: Border.all(color: Colors.grey[400]!),
             borderRadius: BorderRadius.circular(10)),
         child: Row(
           children: [

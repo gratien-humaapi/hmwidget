@@ -1,8 +1,8 @@
-import "package:flutter/material.dart";
+import 'dart:math' as math;
 
-import "dart:math" as math;
+import 'package:flutter/material.dart';
 
-import 'package:hmwidget/utils/hm_radius.dart';
+import '../../utils/hm_radius.dart';
 
 class PathPainter {
   const PathPainter();

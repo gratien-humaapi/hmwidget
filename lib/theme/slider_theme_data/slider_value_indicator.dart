@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:hmwidget/theme/slider_theme_data/path_painter.dart';
-import 'package:hmwidget/utils/hm_radius.dart';
+
+import '../../utils/hm_radius.dart';
+import 'path_painter.dart';
 
 class ValueIndicatorShape extends SliderComponentShape {
-  final double sliderValue;
-  final HMOrientation orientation;
   const ValueIndicatorShape(
       {required this.sliderValue, required this.orientation});
+  final double sliderValue;
+  final HMOrientation orientation;
   static const PathPainter _pathPainter = PathPainter();
   @override
   Size getPreferredSize(

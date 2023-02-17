@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:styled_widget/styled_widget.dart';
 
 import '../../size/hm_button_size.dart';
 import '../../size/hm_select_size.dart';
@@ -86,6 +85,7 @@ class HMMultiSelect extends HookWidget {
     final valueList = useState(selectedValueList);
     useEffect(() {
       print('change');
+      return null;
     }, [valueList.value]);
 
     return AbsorbPointer(
@@ -200,7 +200,7 @@ class SelectPannel extends HookWidget {
         Container(
           child: ListView.builder(
             padding: EdgeInsets.zero,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: selectListItem.length,
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int index) {

@@ -170,7 +170,7 @@ class _CameraPageState extends State<CameraPage> {
                         }
                       },
                       iconColor: Colors.white,
-                      icon: Icon(Icons.flip_camera_ios_outlined),
+                      icon: const Icon(Icons.flip_camera_ios_outlined),
                     ),
                   ],
                 ),

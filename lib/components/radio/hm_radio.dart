@@ -8,7 +8,6 @@ import 'package:styled_widget/styled_widget.dart';
 
 import '../../hmwidget.dart';
 import '../../utils/constant.dart';
-import '../../size/hm_radio_size.dart';
 import '../../widget_theme.dart';
 
 class HMRadio extends HookWidget {
@@ -25,8 +24,7 @@ class HMRadio extends HookWidget {
       this.divider,
       this.radioColor,
       required this.onChanged,
-      Key? key})
-      : super(key: key);
+      super.key});
 
   final bool disabled;
   final bool hidden;
@@ -165,10 +163,9 @@ class HMRadio extends HookWidget {
 }
 
 class RadioIcon extends StatelessWidget {
+  const RadioIcon({required this.isChecked, required this.color, super.key});
   final bool isChecked;
   final Color color;
-  const RadioIcon({required this.isChecked, required this.color, Key? key})
-      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

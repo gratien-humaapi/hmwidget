@@ -1,9 +1,10 @@
-import "package:flutter/material.dart";
-import "dart:math" as math;
+import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
 
 class SliderTrack extends SliderTrackShape {
-  double radius;
   SliderTrack({required this.radius});
+  double radius;
   double extraSpace = 0.0;
   @override
   Rect getPreferredRect({
@@ -37,6 +38,7 @@ class SliderTrack extends SliderTrackShape {
     required RenderBox parentBox,
     required SliderThemeData sliderTheme,
     required Animation<double> enableAnimation,
+    Offset? secondaryOffset,
     required TextDirection textDirection,
     required Offset thumbCenter,
     bool isDiscrete = false,

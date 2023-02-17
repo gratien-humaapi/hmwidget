@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hmwidget/size/hm_switch_size.dart';
-import 'package:hmwidget/utils/hm_radius.dart';
 import 'package:styled_widget/styled_widget.dart';
 
+import '../../size/hm_switch_size.dart';
 import '../../utils/constant.dart';
+import '../../utils/hm_radius.dart';
 import '../../utils/sizes.dart';
 import '../../widget_theme.dart';
 
@@ -92,7 +92,7 @@ class HMSwitch extends HookWidget {
             color: value ? switchColor : const Color.fromRGBO(228, 229, 230, 1),
             border: Border.all(
                 color: borderColor ?? Colors.transparent,
-                strokeAlign: StrokeAlign.outside,
+                strokeAlign: BorderSide.strokeAlignOutside,
                 style:
                     borderColor != null ? BorderStyle.solid : BorderStyle.none),
             borderRadius:

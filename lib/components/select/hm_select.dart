@@ -83,7 +83,7 @@ class HMSelect extends HookWidget {
         Container(
           child: ListView.builder(
             padding: EdgeInsets.zero,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: selectList.length,
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int index) {
@@ -114,7 +114,7 @@ class HMSelect extends HookWidget {
               return GestureDetector(
                 onTap: () {
                   if (selectList[index] != value) {
-                    print('$index, ${value}');
+                    print('$index, $value');
                     onChanged(selectList[index]);
                     Navigator.pop(context);
                   }
@@ -178,7 +178,7 @@ class HMSelect extends HookWidget {
                   child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Text(
-                  '${value}',
+                  '$value',
                   style: selectedValueTextStyle,
                 ),
               )),

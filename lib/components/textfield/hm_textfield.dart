@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hmwidget/utils/hm_radius.dart';
 import 'package:styled_widget/styled_widget.dart';
 
-import '../../utils/constant.dart';
 import '../../size/hm_textfield_size.dart';
 import '../../type/hm_textfield_type.dart';
-import '../../utils/sizes.dart';
+import '../../utils/constant.dart';
+import '../../utils/hm_radius.dart';
 import '../../widget_theme.dart';
 
 class HMTextField extends HookWidget {
@@ -40,8 +39,8 @@ class HMTextField extends HookWidget {
     this.variant,
     this.size,
     this.radius,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
   final bool disabled;
   final bool hidden;
   final String? hintText;
@@ -107,23 +106,22 @@ class HMTextField extends HookWidget {
   Widget build(BuildContext context) {
     final textFieldTheme = Theme.of(context).extension<HMTextFieldTheme>();
     final background =
-        fillColor ?? textFieldTheme?.fillColor ?? Color(0xFFEEEEF0);
+        fillColor ?? textFieldTheme?.fillColor ?? const Color(0xFFEEEEF0);
     final fieldRadius = radius ?? textFieldTheme?.radius ?? HMRadius.sm;
     final fieldSize = size ?? textFieldTheme?.size ?? HMTextFieldSize.md;
     final fieldVariant =
         variant ?? textFieldTheme?.variant ?? HMTextVariant.filled;
     final fieldIconColor =
         iconColor ?? textFieldTheme?.iconColor ?? Colors.grey;
-    final _controller = useState(TextEditingController(text: value));
+    final textcontroller = useTextEditingController(text: value);
     final TextEditingController textEditingController =
-        controller ?? _controller.value;
+        controller ?? textcontroller;
     if (value != null) {
       textEditingController.value.copyWith(
         text: value,
         selection: TextSelection.collapsed(offset: value!.length),
         composing: TextRange.empty,
       );
-      ;
     }
     return AbsorbPointer(
         absorbing: disabled,
@@ -178,14 +176,14 @@ class HMTextField extends HookWidget {
           height: fieldSize.value,
           decoration: BoxDecoration(
             color: disabled
-                ? Color(0x16000000)
+                ? const Color(0x16000000)
                 : fieldVariant == HMTextVariant.filled
                     ? background
                     : null,
             border: Border.all(
-                color:
-                    disabled ? Color(0x00000000) : borderColor ?? outlineColor,
-                style: BorderStyle.solid),
+                color: disabled
+                    ? const Color(0x00000000)
+                    : borderColor ?? outlineColor),
             borderRadius: BorderRadius.circular(fieldRadius.value),
           ),
           child: Row(
@@ -211,8 +209,7 @@ class HMTextField extends HookWidget {
                     hintText: hintText,
                     hintStyle:
                         TextStyle(color: Colors.grey, fontSize: textSize),
-                    contentPadding:
-                        const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 5),
                     isDense: true,
                   ),
                   onTap: onTap,
@@ -234,14 +231,14 @@ class HMTextField extends HookWidget {
           height: fieldSize.value,
           decoration: BoxDecoration(
             color: disabled
-                ? Color(0x16000000)
+                ? const Color(0x16000000)
                 : fieldVariant == HMTextVariant.filled
                     ? background
                     : null,
             border: Border.all(
-                color:
-                    disabled ? Color(0x00000000) : borderColor ?? outlineColor,
-                style: BorderStyle.solid),
+                color: disabled
+                    ? const Color(0x00000000)
+                    : borderColor ?? outlineColor),
             borderRadius: BorderRadius.circular(fieldRadius.value),
           ),
           child: Row(
@@ -302,14 +299,14 @@ class HMTextField extends HookWidget {
           height: fieldSize.value,
           decoration: BoxDecoration(
             color: disabled
-                ? Color(0x16000000)
+                ? const Color(0x16000000)
                 : fieldVariant == HMTextVariant.filled
                     ? background
                     : null,
             border: Border.all(
-                color:
-                    disabled ? Color(0x00000000) : borderColor ?? outlineColor,
-                style: BorderStyle.solid),
+                color: disabled
+                    ? const Color(0x00000000)
+                    : borderColor ?? outlineColor),
             borderRadius: BorderRadius.circular(fieldRadius.value),
           ),
           child: Row(
@@ -362,14 +359,14 @@ class HMTextField extends HookWidget {
           height: fieldSize.value,
           decoration: BoxDecoration(
             color: disabled
-                ? Color(0x16000000)
+                ? const Color(0x16000000)
                 : fieldVariant == HMTextVariant.filled
                     ? background
                     : null,
             border: Border.all(
-                color:
-                    disabled ? Color(0x00000000) : borderColor ?? outlineColor,
-                style: BorderStyle.solid),
+                color: disabled
+                    ? const Color(0x00000000)
+                    : borderColor ?? outlineColor),
             borderRadius: BorderRadius.circular(fieldRadius.value),
           ),
           child: Row(

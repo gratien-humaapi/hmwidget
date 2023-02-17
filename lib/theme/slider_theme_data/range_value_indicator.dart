@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:hmwidget/utils/hm_radius.dart';
+import '../../utils/hm_radius.dart';
 
 import 'path_painter.dart';
 
 class RangeValueIndicatorShape extends RangeSliderValueIndicatorShape {
-  final double sliderValue;
-  final HMOrientation orientation;
   RangeValueIndicatorShape(
       {required this.sliderValue, required this.orientation});
+  final double sliderValue;
+  final HMOrientation orientation;
 
-  static final PathPainter _pathPainter = PathPainter();
+  static const PathPainter _pathPainter = PathPainter();
 
   @override
   Size getPreferredSize(

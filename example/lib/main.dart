@@ -169,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
 
             HMChoiceChips(
-              label: Text("Call"),
+              label: const Text("Call"),
               isFilled: true,
               // disabled: true,
               radius: HMRadius.md,
@@ -178,14 +178,14 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             HMFilterChips(
-              label: Text("Flutter"),
+              label: const Text("Flutter"),
               isFilled: true,
               // disabled: true,
               onSelected: (value) {
                 print(value);
               },
             ),
-            HMTextField(
+            const HMTextField(
               size: HMTextFieldSize.md,
             ),
 

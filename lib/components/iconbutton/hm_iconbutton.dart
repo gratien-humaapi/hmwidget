@@ -10,7 +10,7 @@ import '../../widget_theme.dart';
 class HMIconButton extends HookWidget {
   // final IconButtonCustomProps customProps;
   const HMIconButton(
-      {Key? key,
+      {super.key,
       required this.icon,
       required this.onPressed,
       this.fillColor,
@@ -19,11 +19,7 @@ class HMIconButton extends HookWidget {
       this.buttonVariant,
       this.disabled = false,
       this.hidden = false,
-      this.size})
-      :
-        // assert(buttonVariant == HMButtonVariant.filled || iconColor != null,
-        //       "You must give a textColor if the button is not filled"),
-        super(key: key);
+      this.size});
   final bool disabled;
   final bool hidden;
   final Widget icon;
@@ -37,11 +33,11 @@ class HMIconButton extends HookWidget {
   double getIconSize(HMIconButtonSize size) {
     switch (size) {
       case HMIconButtonSize.xs:
-        return 25.0;
+        return 20.0;
       case HMIconButtonSize.sm:
-        return 30.0;
+        return 25.0;
       case HMIconButtonSize.md:
-        return 35.0;
+        return 30.0;
       case HMIconButtonSize.lg:
         return 40.0;
       case HMIconButtonSize.xl:
@@ -62,6 +58,7 @@ class HMIconButton extends HookWidget {
       child: Container(
         // width: iconSize * 1.2,
         // height: iconSize * 1.2,
+        padding: EdgeInsets.all(iconSize * 0.15),
         decoration: BoxDecoration(
           color: disabled
               ? const Color.fromRGBO(228, 229, 230, 1)
@@ -77,12 +74,12 @@ class HMIconButton extends HookWidget {
           //         : Colors.transparent),
           border: variant == HMButtonVariant.outlined
               ? Border.all(
-                  color: buttonColor,
+                  color: buttonIconColor,
                   style: disabled ? BorderStyle.none : BorderStyle.solid)
               : null,
           borderRadius: BorderRadius.circular(buttonRadius),
         ),
-        child: child,
+        child: Center(child: child),
       ),
     );
   }
@@ -94,17 +91,20 @@ class HMIconButton extends HookWidget {
           required HMButtonVariant variant,
           required Color buttonIconColor,
           required double buttonRadius}) =>
-      variant == HMButtonVariant.filled
-          ? child.padding(all: 3).decorated(
-              border: isPressed
-                  ? Border.all(
-                      color: variant == HMButtonVariant.filled
-                          ? buttonColor
-                          : Colors.transparent,
-                      width: 2)
-                  : null,
-              borderRadius: BorderRadius.circular(buttonRadius * 1.2))
-          : child;
+      Padding(
+        padding: const EdgeInsets.all(3.0),
+        child: variant == HMButtonVariant.filled
+            ? child.decorated(
+                border: isPressed
+                    ? Border.all(
+                        color: variant == HMButtonVariant.filled
+                            ? buttonColor
+                            : Colors.transparent,
+                        width: 2)
+                    : null,
+                borderRadius: BorderRadius.circular(buttonRadius * 1.2))
+            : child,
+      );
 
   Widget _styledInnerContent(
       {required Widget icon,
@@ -133,7 +133,8 @@ class HMIconButton extends HookWidget {
     final iconButtonTheme = Theme.of(context).extension<HMIconButtonTheme>();
     final buttonSize = size ?? iconButtonTheme?.size ?? HMIconButtonSize.md;
     final myRadius = radius ?? iconButtonTheme?.radius ?? HMRadius.md;
-    final buttonRadius = (myRadius.value * buttonSize.value) / 80;
+    final buttonRadius =
+        myRadius.value; //(myRadius.value * buttonSize.value) / 80;
     final buttonColor = fillColor ??
         iconButtonTheme?.fillColor ??
         const Color.fromRGBO(121, 80, 242, 1);

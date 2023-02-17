@@ -21,8 +21,7 @@ class HMChoiceChips extends HookWidget {
       this.textColor,
       this.backgroundColor,
       required this.onSelected,
-      Key? key})
-      : super(key: key);
+      super.key});
 
   final bool disabled;
   final bool hidden;
@@ -54,7 +53,7 @@ class HMChoiceChips extends HookWidget {
         avatar: avatar,
         label: label,
         selected: selected.value,
-        disabledColor: Color(0x16000000),
+        disabledColor: const Color(0x16000000),
         backgroundColor:
             isfilledChip ? chipBackgroundColor : Colors.transparent,
         selectedColor: isfilledChip

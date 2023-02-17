@@ -85,13 +85,13 @@ class HMBottomNavBar extends HookWidget {
 
 // Use with scrollNotification
   _onStartScroll(DragUpdateDetails? metrics) {
-    print('${metrics}');
-    print("Scroll Start");
+    print('$metrics');
+    print('Scroll Start');
   }
 
   _onUpdateScroll(DragUpdateDetails? metrics) {
     print('${metrics!}');
-    print("Scroll Update");
+    print('Scroll Update');
   }
 
   // _onEndScroll(ScrollMetrics metrics) {
@@ -215,8 +215,8 @@ class HMBottomNavBar extends HookWidget {
           //         ),
           //       ),
           //     )),
-          Positioned(
-            bottom: start,
+          Align(
+            alignment: const Alignment(0, 0.95),
             child: SlideTransition(
               position: offsetAnimation.value,
               child: Container(

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class RangeThumbShape extends RangeSliderThumbShape {
-  final double thumbRadius;
 
   const RangeThumbShape({
     required this.thumbRadius,
   });
+  final double thumbRadius;
 
   @override
   Size getPreferredSize(bool isEnabled, bool isDiscrete) {

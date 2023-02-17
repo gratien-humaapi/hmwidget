@@ -1,6 +1,5 @@
 // import 'dart:html';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:styled_widget/styled_widget.dart';
@@ -10,16 +9,16 @@ import '../../utils/constant.dart';
 import 'hm_file_picker_logic.dart';
 
 class FilesPage extends HookWidget {
-  final List<PlatformFile> files;
-
-  final void Function(List<PlatformFile> files) onEditingFile;
-  final ScrollController? controller;
   const FilesPage({
     required this.files,
     required this.onEditingFile,
     this.controller,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
+  final List<PlatformFile> files;
+
+  final void Function(List<PlatformFile> files) onEditingFile;
+  final ScrollController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +26,6 @@ class FilesPage extends HookWidget {
     final selectedList = useState([]);
     final isSelecting = useState(false);
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
       // mainAxisSize: MainAxisSize.max,
       children: [
         Padding(
