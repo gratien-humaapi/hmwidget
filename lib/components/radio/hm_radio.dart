@@ -11,7 +11,7 @@ import '../../utils/constant.dart';
 import '../../widget_theme.dart';
 
 class HMRadio extends HookWidget {
-  // final RadioCustomProps customProps;
+  // final RadioProps customProps;
   const HMRadio(
       {this.disabled = false,
       this.hidden = false,

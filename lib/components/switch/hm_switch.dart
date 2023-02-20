@@ -9,7 +9,7 @@ import '../../utils/sizes.dart';
 import '../../widget_theme.dart';
 
 class HMSwitch extends HookWidget {
-  // final SwitchCustomProps customProps;
+  // final SwitchProps customProps;
   const HMSwitch({
     this.disabled = false,
     this.hidden = false,

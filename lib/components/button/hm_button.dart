@@ -43,7 +43,7 @@ class HMButton extends HookWidget {
   final bool? iconAtLeft;
 
   final void Function() onPressed;
-  // final ButtonCustomProps customProps;
+  // final ButtonProps customProps;
 
   // The button Container
   Widget _styledBox({

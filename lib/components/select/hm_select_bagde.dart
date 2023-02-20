@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:styled_widget/styled_widget.dart';
@@ -9,7 +8,7 @@ import '../../utils/hm_radius.dart';
 import '../../widget_theme.dart';
 
 class HMSelectBadge extends HookWidget {
-  // final SelectBadgesCustomProps customProps;
+  // final SelectBadgesProps customProps;
   const HMSelectBadge({
     super.key,
     this.disabled = false,

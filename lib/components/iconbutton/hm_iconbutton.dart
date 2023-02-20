@@ -8,7 +8,7 @@ import '../../utils/hm_radius.dart';
 import '../../widget_theme.dart';
 
 class HMIconButton extends HookWidget {
-  // final IconButtonCustomProps customProps;
+  // final IconButtonProps customProps;
   const HMIconButton(
       {super.key,
       required this.icon,

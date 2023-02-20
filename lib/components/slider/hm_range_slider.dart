@@ -14,7 +14,7 @@ import '../../utils/hm_radius.dart';
 import '../../widget_theme.dart';
 
 class HMRangeSlider extends HookWidget {
-  // final SliderCustomProps customProps;
+  // final SliderProps customProps;
   const HMRangeSlider({
     super.key,
     this.disabled = false,

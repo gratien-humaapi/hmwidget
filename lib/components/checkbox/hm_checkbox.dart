@@ -10,7 +10,7 @@ import '../../utils/sizes.dart';
 import '../../widget_theme.dart';
 
 class HMCheckBox extends HookWidget {
-  // final CheckBoxCustomProps customProps;
+  // final CheckBoxProps customProps;
   const HMCheckBox({
     super.key,
     this.label,

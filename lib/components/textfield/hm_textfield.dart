@@ -10,7 +10,7 @@ import '../../utils/hm_radius.dart';
 import '../../widget_theme.dart';
 
 class HMTextField extends HookWidget {
-  // final TextFieldCustomProps customProps;
+  // final TextFieldProps customProps;
   const HMTextField({
     this.disabled = false,
     this.hidden = false,
