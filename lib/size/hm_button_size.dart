@@ -7,6 +7,6 @@ enum HMButtonSize {
   lg(100.0),
   xl(150.0);
 
-  final double value;
   const HMButtonSize(this.value);
+  final double value;
 }

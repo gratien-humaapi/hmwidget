@@ -7,6 +7,6 @@ enum HMSelectSize {
   lg(50),
   xl(60);
 
-  final double value;
   const HMSelectSize(this.value);
+  final double value;
 }

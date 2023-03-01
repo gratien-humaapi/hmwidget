@@ -25,8 +25,8 @@ class HMSwitch extends HookWidget {
     this.radius,
     required this.value,
     required this.onChange,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
   final bool disabled;
   final bool hidden;
   final Duration? duration;

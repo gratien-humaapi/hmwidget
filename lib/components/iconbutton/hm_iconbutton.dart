@@ -30,20 +30,20 @@ class HMIconButton extends HookWidget {
   final HMRadius? radius;
   final HMButtonVariant? buttonVariant;
 
-  double getIconSize(HMIconButtonSize size) {
-    switch (size) {
-      case HMIconButtonSize.xs:
-        return 20.0;
-      case HMIconButtonSize.sm:
-        return 25.0;
-      case HMIconButtonSize.md:
-        return 30.0;
-      case HMIconButtonSize.lg:
-        return 40.0;
-      case HMIconButtonSize.xl:
-        return 45.0;
-    }
-  }
+  // double getIconSize(HMIconButtonSize size) {
+  //   switch (size) {
+  //     case HMIconButtonSize.xs:
+  //       return 20.0;
+  //     case HMIconButtonSize.sm:
+  //       return 25.0;
+  //     case HMIconButtonSize.md:
+  //       return 30.0;
+  //     case HMIconButtonSize.lg:
+  //       return 40.0;
+  //     case HMIconButtonSize.xl:
+  //       return 45.0;
+  //   }
+  // }
 
   Widget _styledBox(
       {required Widget child,
@@ -56,9 +56,10 @@ class HMIconButton extends HookWidget {
     return Visibility(
       visible: !hidden,
       child: Container(
-        // width: iconSize * 1.2,
-        // height: iconSize * 1.2,
-        padding: EdgeInsets.all(iconSize * 0.15),
+        alignment: Alignment.center,
+        width: iconSize * 1.5,
+        height: iconSize * 1.5,
+        // padding: EdgeInsets.all(iconSize * 0.2),
         decoration: BoxDecoration(
           color: disabled
               ? const Color.fromRGBO(228, 229, 230, 1)
@@ -114,8 +115,8 @@ class HMIconButton extends HookWidget {
       required double iconSize,
       required HMButtonVariant variant}) {
     return IconTheme(
-        data: IconThemeData(
-            color: iconColor, size: getIconSize(size ?? HMIconButtonSize.md)),
+        data:
+            IconThemeData(color: iconColor ?? buttonIconColor, size: iconSize),
         child: icon);
     // Icon(
     //   icon,

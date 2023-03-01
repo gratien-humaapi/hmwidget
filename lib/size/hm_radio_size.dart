@@ -7,6 +7,6 @@ enum HMRadioSize {
   lg(1.4),
   xl(1.6);
 
-  final double value;
   const HMRadioSize(this.value);
+  final double value;
 }

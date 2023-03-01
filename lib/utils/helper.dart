@@ -9,7 +9,7 @@ Color checkColor(Color color) {
   // int bg = ((red * 0.299) + (green * 0.587) + (blue * 0.114)).toInt();
 
   // Color textColor = (255 - bg < middle) ? Colors.black : Colors.white;
-  Color textColor =
+  final Color textColor =
       color.computeLuminance() > 0.5 ? Colors.black : Colors.white;
   return textColor;
 }

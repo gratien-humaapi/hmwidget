@@ -7,6 +7,6 @@ enum HMSliderSize {
   lg(20.0),
   xl(25.0);
 
-  final double value;
   const HMSliderSize(this.value);
+  final double value;
 }

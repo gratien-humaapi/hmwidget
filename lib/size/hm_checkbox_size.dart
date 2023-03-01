@@ -7,6 +7,6 @@ enum HMCheckBoxSize {
   lg(30.0),
   xl(35.0);
 
-  final double value;
   const HMCheckBoxSize(this.value);
+  final double value;
 }

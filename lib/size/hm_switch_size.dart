@@ -7,6 +7,6 @@ enum HMSwitchSize {
   lg(28.0),
   xl(32.0);
 
-  final double value;
   const HMSwitchSize(this.value);
+  final double value;
 }

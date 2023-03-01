@@ -1,3 +1,6 @@
+## 0.0.3
+- Flutter upgrade
+- Fixed some bugs.
 ## 0.0.2+2
 - Fix the slide animation on `HMSwitch` widget.
 - Add `TextInputAction` to `HMTextField`widget.

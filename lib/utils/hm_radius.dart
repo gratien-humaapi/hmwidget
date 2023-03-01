@@ -7,8 +7,8 @@ enum HMRadius {
   lg(12.0),
   xl(50.0);
 
-  final double value;
   const HMRadius(this.value);
+  final double value;
 }
 
 enum HMOrientation { horizontal, vertical }
