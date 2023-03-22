@@ -40,3 +40,5 @@ export 'package:hmwidget/type/hm_slider_type.dart';
 export 'package:hmwidget/type/hm_textfield_type.dart';
 export 'package:hmwidget/utils/hm_radius.dart';
 export 'package:image_picker/image_picker.dart';
+
+export 'widget_theme.dart';

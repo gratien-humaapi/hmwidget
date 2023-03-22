@@ -4,7 +4,7 @@ class ActionSheetItem {
   const ActionSheetItem(
       {required this.title, required this.onPressed, this.icon});
   final Widget? icon;
-  final String title;
+  final Widget title;
   final void Function() onPressed;
 }
 
@@ -28,9 +28,9 @@ Future<dynamic> showActionSheet(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      action.icon ?? Container(),
+                      action.icon ?? SizedBox(),
                       const SizedBox(width: 20),
-                      Text(action.title),
+                      action.title,
                     ],
                   ),
                 ),
@@ -44,7 +44,7 @@ Future<dynamic> showActionSheet(
                     },
                     child: const Text('Cancel'),
                   )
-              : const SizedBox(),
+              : null,
         );
       });
 }

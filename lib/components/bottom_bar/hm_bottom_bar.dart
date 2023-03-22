@@ -8,20 +8,20 @@ import 'scrollcontroller_provider.dart';
 class HMBottomNavBar extends HookWidget {
   HMBottomNavBar({
     this.principalButtonSize,
-    required List<Tab> tabItems,
+    required List<Widget> tabItems,
     required this.child,
     required this.onTap,
-    required this.currentPage,
+    this.currentPage = 0,
     this.bottomBarColor,
     this.selectedItemColor,
     this.unselectedItemColor,
-    this.end = 2,
-    this.start = 10,
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.linear,
     this.width,
+    this.height,
     this.radius,
-    this.alignment = Alignment.bottomCenter,
+    this.boxShadow,
+    this.alignment,
     this.onBottomBarShown,
     this.principalButton,
     this.principalButtonIndex,
@@ -42,21 +42,21 @@ class HMBottomNavBar extends HookWidget {
   final Color? selectedItemColor;
   final Widget child;
   final Color? unselectedItemColor;
-  final double end;
-  final double start;
   final Duration duration;
   final void Function(int index) onTap;
   final Curve curve;
   final double? width;
+  final BoxShadow? boxShadow;
+  final double? height;
   final BorderRadius? radius;
   final Widget? principalButton;
-  final Alignment alignment;
+  final Alignment? alignment;
   final Function()? onBottomBarShown;
   final Function()? onBottomBarHidden;
   final double? principalButtonSize;
   int? principalButtonIndex;
 
-  List<Tab> items = [];
+  List<Widget> items = [];
 
   void showBottomBar(AnimationController controller) {
     controller.forward();
@@ -83,21 +83,6 @@ class HMBottomNavBar extends HookWidget {
     }
   }
 
-// Use with scrollNotification
-  _onStartScroll(DragUpdateDetails? metrics) {
-    print('$metrics');
-    print('Scroll Start');
-  }
-
-  _onUpdateScroll(DragUpdateDetails? metrics) {
-    print('${metrics!}');
-    print('Scroll Update');
-  }
-
-  // _onEndScroll(ScrollMetrics metrics) {
-  //   print("Scroll End");
-  // }
-
   // void changePage(ValueNotifier<int> currentPage, int newPage) {
   //   currentPage.value = newPage;
   // }
@@ -106,14 +91,14 @@ class HMBottomNavBar extends HookWidget {
   Widget build(BuildContext context) {
     final scrollController = useState(ScrollController());
 
-    useAutomaticKeepAlive();
+    // useAutomaticKeepAlive();
 
-    final tabController = useTabController(
-        initialLength: items.length, initialIndex: currentPage);
+    // final tabController = useTabController(
+    //     initialLength: items.length, initialIndex: currentPage);
 
     final controller = useAnimationController(duration: duration);
     final offsetAnimation = useState(Tween<Offset>(
-      begin: Offset(0, end),
+      begin: const Offset(0, 10),
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: controller,
@@ -121,27 +106,23 @@ class HMBottomNavBar extends HookWidget {
     )));
 
     final isScrollingDown = useState(false);
-    final isOnTop = useState(true);
 
-    scrollController.value.addListener(() {
-      print('object');
-      if (scrollController.value.position.userScrollDirection ==
-          ScrollDirection.reverse) {
-        // if (!isScrollingDown.value) {
-        isScrollingDown.value = true;
-        isOnTop.value = false;
-        hideBottomBar(controller);
-        // }
-      }
-      if (scrollController.value.position.userScrollDirection ==
-          ScrollDirection.forward) {
-        if (isScrollingDown.value) {
-          isScrollingDown.value = false;
-          isOnTop.value = true;
-          showBottomBar(controller);
-        }
-      }
-    });
+    // scrollController.value.addListener(() {
+    //   // if (scrollController.value.position.userScrollDirection ==
+    //   //     ScrollDirection.reverse) {
+    //   //   // if (!isScrollingDown.value) {
+    //   //   isScrollingDown.value = true;
+    //   //   hideBottomBar(controller);
+    //   //   // }
+    //   // }
+    //   // if (scrollController.value.position.userScrollDirection ==
+    //   //     ScrollDirection.forward) {
+    //   //   if (isScrollingDown.value) {
+    //   //     isScrollingDown.value = false;
+    //   //     showBottomBar(controller);
+    //   //   }
+    //   // }
+    // });
 
     controller.forward();
 
@@ -149,26 +130,21 @@ class HMBottomNavBar extends HookWidget {
 
     return NotificationListener<ScrollNotification>(
       onNotification: (scrollNotification) {
-        // if (scrollNotification is ScrollStartNotification) {
-        //   _onStartScroll(scrollNotification.metrics);
-        // }
-        // else
-        // if (scrollNotification is ScrollUpdateNotification) {
-        //   // _onUpdateScroll(scrollNotification.metrics);
-        //   print(scrollNotification.scrollDelta);
-
-        //   if (scrollNotification.metrics.axis == Axis.vertical &&
-        //       !scrollNotification.metrics.outOfRange &&
-        //       scrollNotification.scrollDelta! > 0) {
-        //     hideBottomBar(controller);
-        //   } else {
-        //     showBottomBar(controller);
-        //   }
-        // }
-        // else if (scrollNotification is ScrollEndNotification) {
-        //   _onEndScroll(scrollNotification.metrics);
-        // }
-        return false;
+        if (scrollNotification is ScrollUpdateNotification) {
+          // Check the direction of the scroll
+          if (scrollNotification.scrollDelta! < 0) {
+            // User is scrolling down
+            print("scrolling down...");
+            isScrollingDown.value = false;
+            showBottomBar(controller);
+          } else if (scrollNotification.scrollDelta! > 0) {
+            // User is scrolling up
+            print("scrolling up...");
+            isScrollingDown.value = true;
+            hideBottomBar(controller);
+          }
+        }
+        return true;
       },
       child: Stack(
         fit: StackFit.expand,
@@ -216,22 +192,22 @@ class HMBottomNavBar extends HookWidget {
           //       ),
           //     )),
           Align(
-            alignment: const Alignment(0, 0.95),
+            alignment: alignment ?? const Alignment(0, 0.95),
             child: SlideTransition(
               position: offsetAnimation.value,
               child: Container(
                 width: tabWidth,
-                height: 58,
+                height: height ?? 59,
                 decoration: BoxDecoration(
                   color: bottomBarColor ?? Colors.white,
                   borderRadius: radius ?? BorderRadius.circular(50),
                   boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xffA0A0A0).withOpacity(0.5),
-                      offset: const Offset(0, 3),
-                      blurRadius: 10,
-                      spreadRadius: 2,
-                    ),
+                    boxShadow ??
+                        BoxShadow(
+                          color: const Color(0xffA0A0A0).withOpacity(0.5),
+                          offset: const Offset(0, 3),
+                          blurRadius: 18,
+                        ),
                   ],
                 ),
                 child: ClipRRect(
@@ -240,27 +216,26 @@ class HMBottomNavBar extends HookWidget {
                     alignment: Alignment.center,
                     fit: StackFit.expand,
                     children: [
-                      TabBar(
-                        // isScrollable: true,
-                        indicatorPadding: const EdgeInsets.fromLTRB(4, 0, 4, 2),
-                        controller: tabController,
-                        labelColor: selectedItemColor ?? Colors.blue,
-                        unselectedLabelColor:
-                            unselectedItemColor ?? Colors.grey,
-                        indicator: CustomTabIndicator(
-                            color: selectedItemColor ?? Colors.blue),
-                        onTap: (value) {
-                          final newIndex = _getIndex(value);
-                          if (newIndex == null) {
-                            return;
-                          }
-
-                          onTap(newIndex);
-                        },
-
-                        tabs: [
+                      Row(
+                        // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
                           for (int i = 0; i < items.length; i++) ...[
-                            items[i],
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  final newIndex = _getIndex(i);
+                                  if (newIndex == null) {
+                                    return;
+                                  }
+
+                                  onTap(newIndex);
+                                },
+                                child: Container(
+                                  color: Colors.white.withOpacity(0.005),
+                                  child: items[i],
+                                ),
+                              ),
+                            ),
                           ]
                         ],
                       ),

@@ -1,186 +1,260 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hmwidget/utils/constant.dart';
 import 'package:styled_widget/styled_widget.dart';
 
+import '../../size/hm_autocomplete_size.dart';
+import '../../utils/hm_radius.dart';
+import '../../widget_theme.dart';
+import '../detailspage/hm_details_page.dart';
+
 class HMAutocomplete extends HookWidget {
-  const HMAutocomplete(
-      {super.key,
-      this.disabled = false,
-      this.hidden = false,
-      required this.optionsBuilder,
-      this.optionsViewBuilder,
-      this.fieldViewBuilder,
-      this.initialValue,
-      this.onSelected,
-      required this.value});
-  final ValueNotifier value;
+  const HMAutocomplete({
+    super.key,
+    this.disabled = false,
+    this.hidden = false,
+    this.isModalView = true,
+    required this.optionsBuilder,
+    this.optionsViewBuilder,
+    this.fieldViewBuilder,
+    this.fillColor,
+    this.initialValue,
+    required this.onSelected,
+    this.hintText,
+    this.selectPanelDecoration,
+    this.selectedBgColor,
+    this.selectedValueTextStyle,
+    this.radius,
+    this.size,
+  });
   final bool disabled;
+  final HMAutocompleteSize? size;
+  final HMRadius? radius;
   final bool hidden;
-  final List Function(String value) optionsBuilder;
+  final bool isModalView;
+  final String? initialValue;
+  final BoxDecoration? selectPanelDecoration;
+  final TextStyle? selectedValueTextStyle;
+  final Color? fillColor;
+  final Color? selectedBgColor;
+  final List<String> Function(String value) optionsBuilder;
   final Widget Function(BuildContext, void Function(String), List<String>)?
       optionsViewBuilder;
-  final Widget Function(
-          BuildContext, TextEditingController, ValueNotifier<bool>)?
+  final Widget Function(BuildContext, TextEditingController, bool)?
       fieldViewBuilder;
-  final void Function(String)? onSelected;
-  final String? initialValue;
+  final void Function(String) onSelected;
+  final String? hintText;
 
+//
+  double _getTextSize(HMAutocompleteSize size) {
+    switch (size) {
+      case HMAutocompleteSize.xs:
+        return 12.0;
+      case HMAutocompleteSize.sm:
+        return 14.0;
+      case HMAutocompleteSize.md:
+        return 16.0;
+      case HMAutocompleteSize.lg:
+        return 18.0;
+      case HMAutocompleteSize.xl:
+        return 20.0;
+    }
+  }
+
+//
   Widget _styledBox({
     required Widget child,
   }) =>
       Visibility(visible: !hidden, child: child);
 
-  Widget _styledSelectPannel({
-    required ValueNotifier controller,
-    required ValueNotifier<bool> showClearButton,
-    required BuildContext context,
-    required List list,
-    required ValueNotifier<String> tempValue,
-  }) {
-    return Column(
-      children: <Widget>[
-        if (fieldViewBuilder != null)
-          defaultfieldViewBuilder(context, controller, showClearButton)
-        else
-          fieldViewBuilder!(context, controller.value as TextEditingController,
-              showClearButton),
-        // fieldViewBuilder != null
-        //     ? fieldViewBuilder!(context, controller.value, () {})
-        //     : fieldViewBuilder(context, controller, showClearButton, tempValue),
-        // const SizedBox(height: 10),
-        if (controller.value.text.isEmpty as bool && showClearButton.value)
-          Container()
-        else
-          Align(
-            alignment: Alignment.topLeft,
-            child: ListView.builder(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              itemCount: list.length,
-              itemBuilder: (BuildContext context, int index) {
-                final option = list.elementAt(index);
-                return GestureDetector(
-                  onTap: () {
-                    value.value = option;
-                    Navigator.pop(context, option);
-                  },
-                  child: Container(
-                    // width: double.infinity,
-                    color: index == 0 ? Colors.grey[200] : null,
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text('$option'),
-                  ),
-                );
-              },
-            ),
-          )
-      ],
-    );
-  }
+  @override
+  Widget build(BuildContext context) {
+    final selectTheme = Theme.of(context).extension<HMAutocompleteTheme>();
+    final HMAutocompleteSize autocompleteSize =
+        size ?? selectTheme?.size ?? HMAutocompleteSize.md;
+    final HMRadius boxRadius = radius ?? selectTheme?.radius ?? HMRadius.md;
+    final Color inputColor =
+        fillColor ?? selectTheme?.fillColor ?? Colors.grey.shade200;
+    final Color activeOptionColor =
+        selectedBgColor ?? selectTheme?.selectedBgColor ?? Colors.grey.shade300;
 
-  Widget defaultfieldViewBuilder(
-    BuildContext context,
-    ValueNotifier controller,
-    ValueNotifier<bool> showClearButton,
-  ) {
-    return AppBar(
-      automaticallyImplyLeading: false,
-      backgroundColor: Colors.transparent,
-      elevation: 0.0,
-      titleSpacing: 5.0,
-      title: Container(
-        height: 45,
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey[400]!),
-            borderRadius: BorderRadius.circular(10)),
-        child: Row(
-          children: [
-            IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              splashRadius: 20,
-              icon: const Icon(
-                Icons.keyboard_backspace,
-                color: Colors.black,
-              ),
-            ),
-            Expanded(
-              child: TextField(
-                controller: controller.value as TextEditingController,
-                autofocus: true,
-                textInputAction: TextInputAction.search,
-                style: const TextStyle(fontSize: 16, height: 1.5),
-                decoration: const InputDecoration(
-                  // filled: true,
-                  isDense: true,
-                  border: InputBorder.none,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                ),
-              ),
-            ),
-            if (showClearButton.value)
-              Padding(
-                padding: const EdgeInsets.only(right: 5.0),
-                child: InkWell(
-                  child: const Icon(
-                    Icons.close_rounded,
-                    color: Colors.black,
+    return AbsorbPointer(
+      absorbing: disabled,
+      child: DetailsPage(
+        destinationPage: _SelectPannel(
+                initialValue: initialValue ?? '',
+                selectedBgColor: activeOptionColor,
+                onSelected: onSelected,
+                optionsBuilder: optionsBuilder)
+            .parent(({required Widget child}) => _styledBox(
+                  child: child,
+                )),
+        isModal: isModalView,
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          decoration: selectPanelDecoration ??
+              BoxDecoration(
+                  color: inputColor,
+                  borderRadius: BorderRadius.circular(boxRadius.value)),
+          height: autocompleteSize.value,
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: initialValue != null && initialValue!.isEmpty
+                ? Text(
+                    hintText ?? '',
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: _getTextSize(autocompleteSize)),
+                  )
+                : Text(
+                    '$initialValue',
+                    style: selectedValueTextStyle,
                   ),
-                  onTap: () {
-                    controller.value.text = '';
-                  },
-                ),
-              )
-          ],
+          ),
         ),
       ),
     );
   }
+}
 
-  // Widget? getClearButton(bool showClearButton) {
-  //   if (showClearButton) {
-  //     return null;
-  //   }
-
-  //   return IconButton(
-  //     onPressed: () => controller.clear(),
-  //     icon: Icon(Icons.clear),
-  //   );
-  // }
+class _SelectPannel extends HookWidget {
+  const _SelectPannel({
+    super.key,
+    required this.initialValue,
+    required this.optionsBuilder,
+    this.selectedBgColor,
+    this.optionsViewBuilder,
+    this.fieldViewBuilder,
+    required this.onSelected,
+  });
+  final List<String> Function(String value) optionsBuilder;
+  final Color? selectedBgColor;
+  final String initialValue;
+  final Widget Function(BuildContext context, void Function(String) onSelected,
+      List<String> options)? optionsViewBuilder;
+  final Widget Function(BuildContext, TextEditingController, bool)?
+      fieldViewBuilder;
+  final void Function(String) onSelected;
 
   @override
   Widget build(BuildContext context) {
-    final ValueNotifier<List> list = useState([]);
-    final ValueNotifier<String> tempValue = useState('');
-    final controller = useTextEditingController(text: initialValue ?? '');
+    final ValueNotifier<List<String>> list = useState([]);
     final ValueNotifier<bool> showClearButton = useState(false);
+    final controller = useState(TextEditingController(text: initialValue));
+    // Call when value change
     void _onChangedField() {
-      final List options = optionsBuilder(
+      final List<String> options = optionsBuilder(
         controller.value.text,
       );
       list.value = options;
+      print(list.value);
     }
 
-    controller.addListener(() {
+    controller.value.addListener(() {
       showClearButton.value = controller.value.text.isNotEmpty;
+      print(showClearButton.value);
       // if (controller.value.text != value.value) value.value = "";
       _onChangedField();
     });
+    return Column(
+      children: <Widget>[
+        if (fieldViewBuilder == null)
+          AppBar(
+            automaticallyImplyLeading: false,
+            backgroundColor: Colors.transparent,
+            elevation: 0.0,
+            titleSpacing: 5.0,
+            title: Container(
+              height: 45,
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey[400]!),
+                  borderRadius: BorderRadius.circular(10)),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    splashRadius: 20,
+                    icon: const Icon(
+                      Icons.keyboard_backspace,
+                      color: Colors.black,
+                    ),
+                  ),
+                  Expanded(
+                    child: TextField(
+                      controller: controller.value,
+                      autofocus: true,
+                      textInputAction: TextInputAction.search,
+                      style: const TextStyle(fontSize: 16, height: 1.5),
+                      decoration: const InputDecoration(
+                        // filled: true,
+                        isDense: true,
+                        border: InputBorder.none,
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                      ),
+                      onChanged: (value) {
+                        // _onChangedField(
+                        //   value,
+                        // );
+                      },
+                    ),
+                  ),
+                  if (showClearButton.value)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 5.0),
+                      child: InkWell(
+                        child: const Icon(
+                          Icons.close_rounded,
+                          color: Colors.black,
+                        ),
+                        onTap: () {
+                          controller.value.clear();
+                        },
+                      ),
+                    )
+                ],
+              ),
+            ),
+          )
+        else
+          fieldViewBuilder!(context, controller.value, showClearButton.value),
+        if (controller.value.text.isEmpty && showClearButton.value)
+          Container()
+        else
+          optionsViewBuilder != null
+              ? optionsViewBuilder!(context, onSelected, list.value)
+              : Align(
+                  alignment: Alignment.topLeft,
+                  child: ListView.builder(
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    itemCount: list.value.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final option = list.value.elementAt(index);
+                      return GestureDetector(
+                        onTap: () {
+                          // value = option;
+                          Navigator.pop(context);
+                          controller.value.clear();
 
-    // print('value.value :${value.value}');
-    return AbsorbPointer(
-        absorbing: disabled,
-        child: _styledSelectPannel(
-          list: list.value,
-          controller: controller,
-          tempValue: tempValue,
-          showClearButton: showClearButton,
-          context: context,
-        ).parent(({required Widget child}) => _styledBox(
-              child: child,
-            )));
+                          onSelected(option);
+                        },
+                        child: Container(
+                          // width: double.infinity,
+                          color: index == 0 ? selectedBgColor : null,
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text('$option'),
+                        ),
+                      );
+                    },
+                  ),
+                )
+      ],
+    );
   }
 }

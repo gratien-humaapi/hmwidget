@@ -17,7 +17,7 @@ class DetailsPage<T> extends HookWidget {
   // final void Function(T value) onTap;
   final void Function()? onClose;
   final bool isModal;
-  final Widget Function() destinationPage;
+  final Widget destinationPage;
 
   Future<void> buildPage(BuildContext context) async {
     await Navigator.of(context).push(
@@ -27,7 +27,7 @@ class DetailsPage<T> extends HookWidget {
             onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
             child: Scaffold(
                 // backgroundColor: Colors.grey[300],
-                body: destinationPage()),
+                body: destinationPage),
           ),
         ),
       ),
@@ -61,7 +61,7 @@ class DetailsPage<T> extends HookWidget {
                   (BuildContext context2, ScrollController scrollController) {
                 return SingleChildScrollView(
                   controller: scrollController,
-                  child: destinationPage(),
+                  child: destinationPage,
                 );
               },
             ),

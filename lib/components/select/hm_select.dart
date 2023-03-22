@@ -23,6 +23,7 @@ class HMSelect extends HookWidget {
     required this.selectionPageTitle,
     this.selectIconColor,
     this.selectedBgColor,
+    this.hintText,
     this.selectPanelDecoration,
     this.selectIconAtLeft,
     required this.onChanged,
@@ -32,6 +33,7 @@ class HMSelect extends HookWidget {
   final bool disabled;
   final bool hidden;
   final HMSelectSize? size;
+  final String? hintText;
   final HMRadius? radius;
   final Widget? selectIcon;
   final TextStyle? selectItemStyle;
@@ -155,16 +157,14 @@ class HMSelect extends HookWidget {
     return AbsorbPointer(
       absorbing: disabled,
       child: DetailsPage(
-        destinationPage: () {
-          return _styledSelectPannel(
-            selectSize: selectSize,
-            selectBoxRadius: selectBoxRadius,
-            selectColor: selectColor,
-            iconAtLeft: iconAtLeft,
-          ).parent(({required child}) => _styledBox(
-                child: child,
-              ));
-        },
+        destinationPage: _styledSelectPannel(
+          selectSize: selectSize,
+          selectBoxRadius: selectBoxRadius,
+          selectColor: selectColor,
+          iconAtLeft: iconAtLeft,
+        ).parent(({required child}) => _styledBox(
+              child: child,
+            )),
         isModal: isModalView,
         child: Container(
           decoration: selectPanelDecoration ??
@@ -177,10 +177,17 @@ class HMSelect extends HookWidget {
               Expanded(
                   child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Text(
-                  '$value',
-                  style: selectedValueTextStyle,
-                ),
+                child: value.toString().isEmpty
+                    ? Text(
+                        '$hintText',
+                        style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: _getTextSize(selectSize)),
+                      )
+                    : Text(
+                        '$value',
+                        style: selectedValueTextStyle,
+                      ),
               )),
               Icon(
                 Icons.arrow_drop_down_rounded,

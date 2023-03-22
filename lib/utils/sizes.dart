@@ -82,10 +82,10 @@ double getLabelSize(dynamic size) {
       return 8.4;
     case HMSwitchSize.sm:
     case HMCheckBoxSize.sm:
-      return 10.8;
+      return 12.0;
     case HMSwitchSize.md:
     case HMCheckBoxSize.md:
-      return 13.2;
+      return 14.0;
     case HMSwitchSize.lg:
     case HMCheckBoxSize.lg:
       return 16.8;
@@ -93,6 +93,6 @@ double getLabelSize(dynamic size) {
     case HMCheckBoxSize.xl:
       return 21.6;
     default:
-      return 13.2;
+      return 14.0;
   }
 }

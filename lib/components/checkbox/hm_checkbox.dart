@@ -17,6 +17,8 @@ class HMCheckBox extends HookWidget {
     this.disabled = false,
     this.hidden = false,
     this.radius,
+    this.checkIconColor,
+    this.labelTextColor,
     this.borderColor,
     this.size,
     required this.value,
@@ -29,6 +31,8 @@ class HMCheckBox extends HookWidget {
   final bool value;
   final Color? color;
   final Color? borderColor;
+  final Color? labelTextColor;
+  final Color? checkIconColor;
   final HMRadius? radius;
   final HMCheckBoxSize? size;
   final void Function(bool) onChange;
@@ -42,6 +46,7 @@ class HMCheckBox extends HookWidget {
     required Color checkBoxColor,
     required HMRadius checkBoxRadius,
     required HMCheckBoxSize checkBoxSize,
+    required Color iconColor,
   }) {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -64,26 +69,26 @@ class HMCheckBox extends HookWidget {
               child: ScaleTransition(
             scale: animation,
             child: Icon(
-              Icons.check,
-              color: disabled
-                  ? const Color.fromRGBO(175, 177, 179, 1)
-                  : checkColor(checkBoxColor),
+              Icons.check_rounded,
+              color:
+                  disabled ? const Color.fromRGBO(175, 177, 179, 1) : iconColor,
               size: checkBoxSize.value / 1.3,
             ),
           )),
         ),
-        Container(
-          color: Colors.transparent,
-          height: getLabelSize(size) * 2,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-            child: Center(
+        Expanded(
+          child: Container(
+            color: Colors.transparent,
+            // height: getLabelSize(size) * 2,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0),
               child: Text(
                 label ?? '',
+                // overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                     color: disabled
                         ? const Color.fromRGBO(181, 183, 186, 1)
-                        : Colors.black,
+                        : labelTextColor ?? Colors.black,
                     fontSize: getLabelSize(size)),
               ),
             ),
@@ -98,6 +103,9 @@ class HMCheckBox extends HookWidget {
     final HMCheckBoxTheme? checkBoxTheme =
         Theme.of(context).extension<HMCheckBoxTheme>();
     final Color checkBoxColor = color ?? checkBoxTheme?.color ?? defaultColor;
+    final Color iconColor = checkIconColor ??
+        checkBoxTheme?.checkIconColor ??
+        checkColor(checkBoxColor);
     final HMRadius checkBoxRadius =
         radius ?? checkBoxTheme?.radius ?? HMRadius.xl;
     final HMCheckBoxSize checkBoxSize =
@@ -116,6 +124,7 @@ class HMCheckBox extends HookWidget {
       child: _styledInnerContent(
         label: label,
         animation: animation,
+        iconColor: iconColor,
         checkBoxColor: checkBoxColor,
         checkBoxRadius: checkBoxRadius,
         checkBoxSize: checkBoxSize,

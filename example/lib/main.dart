@@ -15,7 +15,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(primarySwatch: Colors.blue,
+      theme: ThemeData(
+          primarySwatch: Colors.blue,
           // useMaterial3: true,
           extensions: [
             HMButtonTheme(
@@ -66,6 +67,29 @@ class _MyHomePageState extends State<MyHomePage> {
   String select = '';
   List choix = [];
   RangeValues rangeValues = const RangeValues(10, 50);
+  List<String> options = [
+    'pomme',
+    'banane',
+    'orange',
+    'ananas',
+    'pastèque',
+    'fraise',
+    'melon',
+    'raisin',
+    'kiwi',
+    'mangue',
+    'papaye',
+    'poire',
+    'citron',
+    'lime',
+    'pamplemousse',
+    'mandarine',
+    'framboise',
+    'myrtille',
+    'cerise',
+    'pêche'
+  ];
+  String choosedValue = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,6 +103,24 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           children: [
             // ElevatedButton(onPressed: () {}, child: Text("Open"), ),
+            HMAutocomplete(
+              hintText: "Enter somting",
+              optionsBuilder: (value) {
+                if (value == '') {
+                  return [];
+                }
+                return options.where((String option) {
+                  return option.contains(value);
+                }).toList();
+              },
+              initialValue: choosedValue,
+              onSelected: (value) {
+                setState(() {
+                  choosedValue = value;
+                });
+              },
+            ),
+            SizedBox(height: 50),
             HMIconButton(
                 icon: const Icon(Icons.edit_calendar_sharp), onPressed: () {}),
             SizedBox(
@@ -153,11 +195,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               selectListItem: const [
-                "Flutter",
-                'React',
-                'Svelte',
-                'Vue',
-                'Python'
+                "Création d'une armoire de rangement sur mesure",
+                "Réparation d'une chaise en bois",
+                "Fabrication d'un escalier en bois",
+                "Création d'une bibliothèque encastrée",
+                "Réparation d'un plancher en bois",
+                "Fabrication d'un banc de jardin en bois",
+                "Création d'un présentoir à bijoux en bois"
               ],
               onChanged: (value) {
                 setState(() {
@@ -165,7 +209,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   print(choix);
                 });
               },
-              selectedValueList: choix,
+              selectedValues: choix,
             ),
 
             HMChoiceChips(

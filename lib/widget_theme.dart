@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 
 import 'hmwidget.dart';
+import 'size/hm_autocomplete_size.dart';
 
 class HMButtonTheme extends ThemeExtension<HMButtonTheme> {
   HMButtonTheme(
       { // this.fullWidth,
       this.fillColor,
       this.textColor,
-      this.buttonVariant = HMButtonVariant.filled,
-      this.radius = HMRadius.md,
-      this.size = HMButtonSize.md});
+      this.buttonVariant,
+      this.radius,
+      this.size});
 
   Color? fillColor;
   Color? textColor;
-  HMRadius radius;
-  HMButtonSize size;
+  HMRadius? radius;
+  HMButtonSize? size;
   // bool? fullWidth;
-  HMButtonVariant buttonVariant;
+  HMButtonVariant? buttonVariant;
 
   @override
   HMButtonTheme copyWith(
@@ -57,23 +58,31 @@ class HMButtonTheme extends ThemeExtension<HMButtonTheme> {
 class HMCheckBoxTheme extends ThemeExtension<HMCheckBoxTheme> {
   HMCheckBoxTheme({
     this.color,
-    this.radius = HMRadius.md,
-    this.size = HMCheckBoxSize.md,
+    this.radius,
+    this.size,
+    this.labelTextColor,
+    this.checkIconColor,
   });
 
   final Color? color;
-  final HMRadius radius;
-  final HMCheckBoxSize size;
+  final Color? labelTextColor;
+  final Color? checkIconColor;
+  final HMRadius? radius;
+  final HMCheckBoxSize? size;
 
   @override
   HMCheckBoxTheme copyWith({
     Color? color,
     HMRadius? radius,
+    Color? labelTextColor,
+    Color? checkIconColor,
     HMCheckBoxSize? size,
   }) {
     return HMCheckBoxTheme(
       color: color ?? this.color,
       radius: radius ?? this.radius,
+      labelTextColor: labelTextColor ?? this.labelTextColor,
+      checkIconColor: checkIconColor ?? this.checkIconColor,
       size: size ?? this.size,
     );
   }
@@ -85,6 +94,8 @@ class HMCheckBoxTheme extends ThemeExtension<HMCheckBoxTheme> {
     }
     return HMCheckBoxTheme(
       color: Color.lerp(color, other.color, t),
+      labelTextColor: Color.lerp(labelTextColor, other.labelTextColor, t),
+      checkIconColor: Color.lerp(checkIconColor, other.checkIconColor, t),
       radius: other.radius,
       size: other.size,
     );
@@ -93,7 +104,7 @@ class HMCheckBoxTheme extends ThemeExtension<HMCheckBoxTheme> {
   // Optional
   @override
   String toString() =>
-      'HMCheckBoxTheme(color: $color, radius: $radius, size: $size)';
+      'HMCheckBoxTheme(color: $color, radius: $radius, size: $size, labelTextColor: $labelTextColor, checkIconColor: $checkIconColor)';
 }
 
 class HMChipTheme extends ThemeExtension<HMChipTheme> {
@@ -327,16 +338,76 @@ class HMSelectTheme extends ThemeExtension<HMSelectTheme> {
       'HMSelectTheme(selectIconColor: $selectIconColor, selectIconAtLeft: $selectIconAtLeft, radius: $radius, size: $size)';
 }
 
+class HMAutocompleteTheme extends ThemeExtension<HMAutocompleteTheme> {
+  HMAutocompleteTheme({
+    this.size,
+    this.radius,
+    this.selectPanelDecoration,
+    this.selectedValueTextStyle,
+    this.fillColor,
+    this.selectedBgColor,
+  });
+
+  final HMAutocompleteSize? size;
+  final BoxDecoration? selectPanelDecoration;
+  final TextStyle? selectedValueTextStyle;
+  final Color? fillColor;
+  final Color? selectedBgColor;
+  final HMRadius? radius;
+
+  @override
+  HMAutocompleteTheme copyWith({
+    HMAutocompleteSize? size,
+    BoxDecoration? selectPanelDecoration,
+    TextStyle? selectedValueTextStyle,
+    Color? fillColor,
+    Color? selectedBgColor,
+    HMRadius? radius,
+  }) {
+    return HMAutocompleteTheme(
+      radius: radius ?? this.radius,
+      selectedBgColor: selectedBgColor ?? this.selectedBgColor,
+      selectPanelDecoration:
+          selectPanelDecoration ?? this.selectPanelDecoration,
+      selectedValueTextStyle:
+          selectedValueTextStyle ?? this.selectedValueTextStyle,
+      size: size ?? this.size,
+    );
+  }
+
+  @override
+  HMAutocompleteTheme lerp(
+      ThemeExtension<HMAutocompleteTheme>? other, double t) {
+    if (other is! HMAutocompleteTheme) {
+      return this;
+    }
+    return HMAutocompleteTheme(
+      selectedBgColor: Color.lerp(selectedBgColor, other.selectedBgColor, t),
+      radius: other.radius,
+      selectPanelDecoration: other.selectPanelDecoration,
+      selectedValueTextStyle: other.selectedValueTextStyle,
+      size: other.size,
+    );
+  }
+
+  // Optional
+  @override
+  String toString() =>
+      'HMSelectTheme(selectedBgColor: $selectedBgColor, selectPanelDecoration: $selectPanelDecoration, radius: $radius, size: $size, selectedValueTextStyle: $selectedValueTextStyle)';
+}
+
 class HMMultiSelectTheme extends ThemeExtension<HMMultiSelectTheme> {
   HMMultiSelectTheme({
     this.size,
     this.radius,
     this.selectIconAtLeft,
+    this.fillColor,
     this.selectIconColor,
   });
 
   final HMSelectSize? size;
   final Color? selectIconColor;
+  final Color? fillColor;
 
   /// The position of the icon on the line
   ///`"true"` to put the icon before the title
@@ -350,9 +421,11 @@ class HMMultiSelectTheme extends ThemeExtension<HMMultiSelectTheme> {
     Color? selectIconColor,
     bool? selectIconAtLeft,
     HMRadius? radius,
+    Color? fillColor,
   }) {
     return HMMultiSelectTheme(
       selectIconColor: selectIconColor ?? this.selectIconColor,
+      fillColor: fillColor ?? this.fillColor,
       radius: radius ?? this.radius,
       selectIconAtLeft: selectIconAtLeft ?? this.selectIconAtLeft,
       size: size ?? this.size,
@@ -366,6 +439,7 @@ class HMMultiSelectTheme extends ThemeExtension<HMMultiSelectTheme> {
     }
     return HMMultiSelectTheme(
       selectIconColor: Color.lerp(selectIconColor, other.selectIconColor, t),
+      fillColor: Color.lerp(fillColor, other.fillColor, t),
       selectIconAtLeft: other.selectIconAtLeft,
       radius: other.radius,
       size: other.size,
@@ -375,7 +449,7 @@ class HMMultiSelectTheme extends ThemeExtension<HMMultiSelectTheme> {
   // Optional
   @override
   String toString() =>
-      'HMMultiSelectTheme(selectIconColor: $selectIconColor, selectIconAtLeft: $selectIconAtLeft, radius: $radius, size: $size)';
+      'HMMultiSelectTheme(selectIconColor: $selectIconColor, selectIconAtLeft: $selectIconAtLeft, radius: $radius, size: $size, fillColor: $fillColor)';
 }
 
 class HMSelectBagdeTheme extends ThemeExtension<HMSelectBagdeTheme> {
@@ -592,7 +666,11 @@ class HMTextFieldTheme extends ThemeExtension<HMTextFieldTheme> {
     this.radius,
     this.size,
     this.variant,
+    this.contentPadding,
     this.iconColor,
+    this.disabledColor,
+    this.hidePasswordIcon,
+    this.showPasswordIcon,
   });
 
   final HMTextVariant? variant;
@@ -600,6 +678,10 @@ class HMTextFieldTheme extends ThemeExtension<HMTextFieldTheme> {
   final HMRadius? radius;
   final Color? fillColor;
   final Color? iconColor;
+  final Color? disabledColor;
+  final EdgeInsets? contentPadding;
+  final Widget? hidePasswordIcon;
+  final Widget? showPasswordIcon;
 
   @override
   HMTextFieldTheme copyWith({

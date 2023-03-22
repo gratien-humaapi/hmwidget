@@ -18,10 +18,13 @@ class HMButton extends HookWidget {
     this.fillColor,
     this.textColor,
     this.radius,
+    this.fontWeight,
     this.size,
     this.fullWidth = false,
     this.buttonVariant,
+    this.boxShadow,
     this.icon,
+    this.borderColor,
     this.iconAtLeft = true,
     required this.onPressed,
     this.disabled = false,
@@ -35,8 +38,11 @@ class HMButton extends HookWidget {
   final String content;
   final Color? fillColor;
   final Color? textColor;
+  final Color? borderColor;
   final HMRadius? radius;
+  final FontWeight? fontWeight;
   final HMButtonSize? size;
+  final List<BoxShadow>? boxShadow;
   final bool fullWidth;
   final HMButtonVariant? buttonVariant;
   final Widget? icon;
@@ -61,9 +67,12 @@ class HMButton extends HookWidget {
             horizontal: buttonSize.value * 0.1,
             vertical: buttonSize.value * 0.05)
         .constrained(
-            minWidth: fullWidth ? double.infinity : 50,
-            // maxWidth: fullWidth ? double.infinity : (buttonSize.value * 1.0) + 10,
-            maxHeight: getRatio(buttonSize.value))
+          minWidth: fullWidth ? double.infinity : 64,
+          minHeight: buttonSize.value,
+          // maxWidth: fullWidth ? double.infinity : (buttonSize.value * 1.0) + 10,
+          // maxHeight: getRatio(buttonSize.value),
+          // height: buttonSize.value,
+        )
         .decorated(
           color: disabled
               ? const Color.fromRGBO(228, 229, 230, 1)
@@ -77,9 +86,10 @@ class HMButton extends HookWidget {
           //     variant == HMButtonVariant.filled
           //         ? buttonColor
           //         : Colors.transparent),
+          boxShadow: disabled ? null : boxShadow,
           border: variant == HMButtonVariant.outlined
               ? Border.all(
-                  color: buttonTextColor,
+                  color: borderColor ?? buttonTextColor,
                   style: disabled ? BorderStyle.none : BorderStyle.solid)
               : Border.all(style: BorderStyle.none),
           borderRadius: BorderRadius.circular(buttonRadius),
@@ -130,17 +140,18 @@ class HMButton extends HookWidget {
                   const Color(0xFFADB5BD).withOpacity(disabled ? 1 : 0.0),
                   BlendMode.srcATop),
               child: IconTheme(
-                  data: IconThemeData(
-                    size: getTextSize(buttonSize) * 1.5,
-                    color: disabled
-                        ? const Color(0xFFADB5BD)
-                        : variant == HMButtonVariant.filled
-                            ? textColor ??
-                                buttonTheme?.textColor ??
-                                checkColor(buttonColor)
-                            : buttonTextColor,
-                  ),
-                  child: icon),
+                data: IconThemeData(
+                  size: getTextSize(buttonSize) * 1.5,
+                  color: disabled
+                      ? const Color(0xFFADB5BD)
+                      : variant == HMButtonVariant.filled
+                          ? textColor ??
+                              buttonTheme?.textColor ??
+                              checkColor(buttonColor)
+                          : buttonTextColor,
+                ),
+                child: icon,
+              ),
             )
             // Icon(icon,
             //     buttonSize: getIconSize(buttonSize),
@@ -158,7 +169,7 @@ class HMButton extends HookWidget {
         )
             .fontSize(getTextSize(buttonSize))
             .letterSpacing(0.5)
-            .fontWeight(FontWeight.w500)
+            .fontWeight(fontWeight)
             .textColor(
               disabled
                   ? const Color(0xFFADB5BD)
