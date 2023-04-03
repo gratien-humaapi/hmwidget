@@ -23,6 +23,8 @@ class HMButton extends HookWidget {
     this.fullWidth = false,
     this.buttonVariant,
     this.boxShadow,
+    this.isLoading = false,
+    this.loader = HMLoader.oval,
     this.icon,
     this.borderColor,
     this.iconAtLeft = true,
@@ -42,6 +44,8 @@ class HMButton extends HookWidget {
   final HMRadius? radius;
   final FontWeight? fontWeight;
   final HMButtonSize? size;
+  final bool isLoading;
+  final HMLoader loader;
   final List<BoxShadow>? boxShadow;
   final bool fullWidth;
   final HMButtonVariant? buttonVariant;
@@ -206,9 +210,9 @@ class HMButton extends HookWidget {
 
     final ValueNotifier<bool> isPressed = useState(false);
     return AbsorbPointer(
-      absorbing: disabled,
+      absorbing: isLoading || disabled,
       child: Opacity(
-        opacity: isPressed.value ? 0.5 : 1.0,
+        opacity: isLoading || isPressed.value ? 0.5 : 1.0,
         child: _styledInnerContent(
                 text: content,
                 isPressed: isPressed.value,
@@ -220,7 +224,7 @@ class HMButton extends HookWidget {
                 buttonRadius: buttonRadius,
                 buttonTheme: buttonTheme)
             .parent(({required Widget child}) => _styledBox(
-                child: child,
+                child: isLoading ? getLoader(loader, buttonTextColor) : child,
                 isPressed: isPressed.value,
                 variant: variant,
                 buttonTextColor: buttonTextColor,
@@ -247,5 +251,18 @@ class HMButton extends HookWidget {
             ),
       ),
     );
+  }
+
+  Widget getLoader(HMLoader loader, Color color) {
+    switch (loader) {
+      case HMLoader.bars:
+        return Container();
+      case HMLoader.dots:
+        return Container();
+      case HMLoader.oval:
+        return Center(
+          child: CircularProgressIndicator(color: color),
+        );
+    }
   }
 }

@@ -78,41 +78,61 @@ class HMAutocomplete extends HookWidget {
     final Color activeOptionColor =
         selectedBgColor ?? selectTheme?.selectedBgColor ?? Colors.grey.shade300;
 
+    final bool hasValue = initialValue != null && initialValue!.isNotEmpty;
+
     return AbsorbPointer(
       absorbing: disabled,
       child: DetailsPage(
         destinationPage: _SelectPannel(
-                initialValue: initialValue ?? '',
-                selectedBgColor: activeOptionColor,
-                onSelected: onSelected,
-                optionsBuilder: optionsBuilder)
-            .parent(({required Widget child}) => _styledBox(
-                  child: child,
-                )),
+            initialValue: initialValue ?? '',
+            selectedBgColor: activeOptionColor,
+            onSelected: onSelected,
+            radius: boxRadius.value,
+            optionsBuilder: optionsBuilder),
         isModal: isModalView,
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 15),
+          padding: const EdgeInsets.only(left: 15),
           decoration: selectPanelDecoration ??
               BoxDecoration(
                   color: inputColor,
                   borderRadius: BorderRadius.circular(boxRadius.value)),
           height: autocompleteSize.value,
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: initialValue != null && initialValue!.isEmpty
-                ? Text(
-                    hintText ?? '',
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: _getTextSize(autocompleteSize)),
-                  )
-                : Text(
-                    '$initialValue',
-                    style: selectedValueTextStyle,
+          child: Row(
+            children: [
+              Expanded(
+                  child: hasValue
+                      ? Text(
+                          '$initialValue',
+                          style: selectedValueTextStyle,
+                        )
+                      : Text(
+                          hintText ?? '',
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: _getTextSize(autocompleteSize)),
+                        )),
+              if (hasValue)
+                Container(
+                  decoration: BoxDecoration(
+                      color: inputColor,
+                      borderRadius: BorderRadius.circular(boxRadius.value)),
+                  width: 50,
+                  child: Center(
+                    child: Icon(
+                      Icons.close_rounded,
+                      size: autocompleteSize.value * 0.5,
+                      color: Colors.grey,
+                    ),
                   ),
+                ).gestures(
+                  onTap: () => onSelected(''),
+                ),
+            ],
           ),
-        ),
+        ).parent(({required Widget child}) => _styledBox(
+              child: child,
+            )),
       ),
     );
   }
@@ -124,6 +144,7 @@ class _SelectPannel extends HookWidget {
     required this.initialValue,
     required this.optionsBuilder,
     this.selectedBgColor,
+    this.radius,
     this.optionsViewBuilder,
     this.fieldViewBuilder,
     required this.onSelected,
@@ -131,6 +152,7 @@ class _SelectPannel extends HookWidget {
   final List<String> Function(String value) optionsBuilder;
   final Color? selectedBgColor;
   final String initialValue;
+  final double? radius;
   final Widget Function(BuildContext context, void Function(String) onSelected,
       List<String> options)? optionsViewBuilder;
   final Widget Function(BuildContext, TextEditingController, bool)?
@@ -165,11 +187,12 @@ class _SelectPannel extends HookWidget {
             backgroundColor: Colors.transparent,
             elevation: 0.0,
             titleSpacing: 5.0,
+            toolbarHeight: 60,
             title: Container(
               height: 45,
               decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[400]!),
-                  borderRadius: BorderRadius.circular(10)),
+                  border: Border.all(color: Colors.grey.shade400),
+                  borderRadius: BorderRadius.circular(radius ?? 8)),
               child: Row(
                 children: [
                   IconButton(
@@ -178,7 +201,7 @@ class _SelectPannel extends HookWidget {
                     },
                     splashRadius: 20,
                     icon: const Icon(
-                      Icons.keyboard_backspace,
+                      Icons.arrow_back_ios_new_rounded,
                       color: Colors.black,
                     ),
                   ),
@@ -204,7 +227,7 @@ class _SelectPannel extends HookWidget {
                   ),
                   if (showClearButton.value)
                     Padding(
-                      padding: const EdgeInsets.only(right: 5.0),
+                      padding: const EdgeInsets.only(right: 10.0),
                       child: InkWell(
                         child: const Icon(
                           Icons.close_rounded,
@@ -221,39 +244,44 @@ class _SelectPannel extends HookWidget {
           )
         else
           fieldViewBuilder!(context, controller.value, showClearButton.value),
-        if (controller.value.text.isEmpty && showClearButton.value)
-          Container()
+        // if (controller.value.text.isEmpty && showClearButton.value)
+        //   Container()
+        // else
+        if (optionsViewBuilder != null)
+          optionsViewBuilder!(context, onSelected, list.value)
         else
-          optionsViewBuilder != null
-              ? optionsViewBuilder!(context, onSelected, list.value)
-              : Align(
-                  alignment: Alignment.topLeft,
-                  child: ListView.builder(
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    itemCount: list.value.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final option = list.value.elementAt(index);
-                      return GestureDetector(
-                        onTap: () {
-                          // value = option;
-                          Navigator.pop(context);
-                          controller.value.clear();
+          Expanded(
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: ListView.builder(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                padding: const EdgeInsets.only(bottom: 20),
+                controller: ScrollController(),
+                physics: const BouncingScrollPhysics(),
+                // shrinkWrap: true,
+                itemCount: list.value.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final option = list.value.elementAt(index);
+                  return GestureDetector(
+                    onTap: () {
+                      // value = option;
+                      Navigator.pop(context);
+                      controller.value.clear();
 
-                          onSelected(option);
-                        },
-                        child: Container(
-                          // width: double.infinity,
-                          color: index == 0 ? selectedBgColor : null,
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text('$option'),
-                        ),
-                      );
+                      onSelected(option);
                     },
-                  ),
-                )
+                    child: Container(
+                      // width: double.infinity,
+                      // color: index == 0 ? selectedBgColor : null,
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text('$option'),
+                    ),
+                  );
+                },
+              ),
+            ),
+          )
       ],
     );
   }

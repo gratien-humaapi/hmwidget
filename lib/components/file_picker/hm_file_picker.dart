@@ -141,7 +141,7 @@ class HMFilePiker extends HookWidget {
           source: FileSource.document),
     ];
     final List<ActionSheetItem> actionsList = sourcesList.map((source) {
-      final String title = source.source.value as String;
+      final Widget title = Text('${source.source.value}');
       final Widget icon = source.icon as Widget;
       return ActionSheetItem(
           icon: icon,

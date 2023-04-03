@@ -38,7 +38,7 @@ class DetailsPage<T> extends HookWidget {
   }
 
   Future<void> buildmodal(BuildContext context) async {
-    showModalBottomSheet(
+    await showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         useRootNavigator: true,
@@ -52,18 +52,9 @@ class DetailsPage<T> extends HookWidget {
         builder: (BuildContext context) {
           return GestureDetector(
             onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-            child: DraggableScrollableSheet(
-              initialChildSize: 0.9,
-              minChildSize: 0.5,
-              maxChildSize: 0.9,
-              expand: false,
-              builder:
-                  (BuildContext context2, ScrollController scrollController) {
-                return SingleChildScrollView(
-                  controller: scrollController,
-                  child: destinationPage,
-                );
-              },
+            child: FractionallySizedBox(
+              heightFactor: 0.9,
+              child: destinationPage,
             ),
           );
         });

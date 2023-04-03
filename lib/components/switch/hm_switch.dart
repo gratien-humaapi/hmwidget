@@ -20,7 +20,9 @@ class HMSwitch extends HookWidget {
     this.borderColor,
     this.iconOn,
     this.iconOff,
+    this.reversed = false,
     this.color,
+    this.labelTextStyle,
     this.size,
     this.radius,
     required this.value,
@@ -29,10 +31,12 @@ class HMSwitch extends HookWidget {
   });
   final bool disabled;
   final bool hidden;
+  final bool reversed;
   final Duration? duration;
   final String? onLabel;
   final String? offLabel;
   final String? label;
+  final TextStyle? labelTextStyle;
   final Widget? iconOn;
   final Widget? iconOff;
   final Color? color;
@@ -51,30 +55,39 @@ class HMSwitch extends HookWidget {
     required Widget child,
     required AnimationController controller,
     required HMSwitchSize switchSize,
-  }) =>
-      Visibility(
-          visible: !hidden,
-          child: Container(
-            // color: Colors.transparent,
-            // height: getTrackSize(switchSize),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                child,
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Text(
-                    label ?? '',
-                    style: TextStyle(
-                        color: disabled
-                            ? const Color.fromARGB(255, 181, 183, 186)
-                            : Colors.black,
-                        fontSize: getLabelSize(size)),
-                  ),
-                )
-              ],
-            ),
-          ));
+  }) {
+    final List<Widget> children = [
+      child,
+      Expanded(
+        child: Padding(
+          padding: EdgeInsets.only(left: reversed ? 0 : 8.0),
+          child: Text(
+            label ?? '',
+            // overflow: TextOverflow.ellipsis,
+            // maxLines: 1,
+            style: labelTextStyle ??
+                TextStyle(
+                    color: disabled
+                        ? const Color.fromARGB(255, 181, 183, 186)
+                        : Colors.black,
+                    fontSize: getLabelSize(size)),
+          ),
+        ),
+      )
+    ];
+    return Visibility(
+        visible: !hidden,
+        child: Container(
+          // color: Colors.red,
+          // height: getTrackSize(switchSize),
+          child: Row(
+            mainAxisAlignment: reversed
+                ? MainAxisAlignment.spaceBetween
+                : MainAxisAlignment.start,
+            children: reversed ? children.reversed.toList() : children,
+          ),
+        ));
+  }
 
   Widget _styledTrack({
     required Widget child,
@@ -86,7 +99,7 @@ class HMSwitch extends HookWidget {
   }) {
     return SizedBox(
       width: getTrackSize(switchSize),
-      height: (getTrackSize(switchSize) * 50) / 100,
+      height: (getTrackSize(switchSize) * 60) / 100,
       child: Container(
         decoration: BoxDecoration(
             color: value ? switchColor : const Color.fromRGBO(228, 229, 230, 1),
@@ -145,8 +158,8 @@ class HMSwitch extends HookWidget {
     return AlignTransition(
       alignment: alignment,
       child: Container(
-          height: switchSize.value,
-          width: switchSize.value,
+          height: switchSize.value * 1.10,
+          width: switchSize.value * 1.10,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(switchRadius.value),
             color: disabled
@@ -220,12 +233,13 @@ class HMSwitch extends HookWidget {
               ))
           .gestures(
         onTap: () {
-          if (animationController.isCompleted) {
+          if (value) {
             onChange(!value);
-            animationController.reverse();
+            print("here ${!value}");
+            animationController.forward();
           } else {
             onChange(!value);
-            animationController.forward();
+            animationController.reverse();
           }
         },
       ),

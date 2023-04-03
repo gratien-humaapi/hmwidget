@@ -67,11 +67,11 @@ double getTrackSize(HMSwitchSize size) {
     case HMSwitchSize.sm:
       return 44.0;
     case HMSwitchSize.md:
-      return 56.0;
+      return 50.0;
     case HMSwitchSize.lg:
-      return 68.0;
+      return 58.0;
     case HMSwitchSize.xl:
-      return 76.0;
+      return 70.0;
   }
 }
 

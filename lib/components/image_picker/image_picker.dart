@@ -11,10 +11,12 @@ import '../actions_sheet/action_sheet.dart';
 class HMImagePicker extends HookWidget {
   const HMImagePicker(
       {this.isMultipleImage = false,
+      this.hasCancelButton = true,
       this.builder,
       required this.onImageSelected,
       super.key});
   final bool isMultipleImage;
+  final bool hasCancelButton;
   final ValueChanged<List<XFile>> onImageSelected;
   final Widget Function(ValueNotifier<List<XFile>> images, bool isMutipleImage)?
       builder;
@@ -27,47 +29,52 @@ class HMImagePicker extends HookWidget {
     });
     return GestureDetector(
       onTap: () {
-        showActionSheet(context: context, actions: [
-          ActionSheetItem(
-              title:
-                  const Text('Camera', style: TextStyle(color: Colors.black)),
-              icon: const Icon(Icons.camera_alt_rounded),
-              onPressed: () {
-                imagePicker.pickImage(source: ImageSource.camera).then((value) {
-                  if (value != null) {
-                    pickedImage.value = [value];
-                  }
-                });
-              }),
-          ActionSheetItem(
-              title:
-                  const Text('Gallery', style: TextStyle(color: Colors.black)),
-              icon: const Icon(Icons.photo),
-              onPressed: () {
-                if (isMultipleImage) {
-                  imagePicker.pickMultiImage().then((value) {
-                    if (value != null) {
-                      pickedImage.value = value;
+        showActionSheet(
+            context: context,
+            hasCancelButton: hasCancelButton,
+            actions: [
+              ActionSheetItem(
+                  title: const Text('Camera',
+                      style: TextStyle(color: Colors.black)),
+                  icon: const Icon(Icons.camera_alt_rounded),
+                  onPressed: () {
+                    imagePicker
+                        .pickImage(source: ImageSource.camera)
+                        .then((value) {
+                      if (value != null) {
+                        pickedImage.value = [value];
+                      }
+                    });
+                  }),
+              ActionSheetItem(
+                  title: const Text('Gallery',
+                      style: TextStyle(color: Colors.black)),
+                  icon: const Icon(Icons.photo),
+                  onPressed: () {
+                    if (isMultipleImage) {
+                      imagePicker.pickMultiImage().then((value) {
+                        if (value != null) {
+                          pickedImage.value = value;
+                        }
+                      });
+                    } else {
+                      imagePicker
+                          .pickImage(source: ImageSource.gallery)
+                          .then((value) {
+                        if (value != null) {
+                          pickedImage.value = [value];
+                        }
+                      });
                     }
-                  });
-                } else {
-                  imagePicker
-                      .pickImage(source: ImageSource.gallery)
-                      .then((value) {
-                    if (value != null) {
-                      pickedImage.value = [value];
-                    }
-                  });
-                }
-                // imagePicker
-                //     .pickImage(source: ImageSource.gallery)
-                //     .then((value) {
-                //   if (value != null) {
-                //     pickedImage.value = [value];
-                //   }
-                // });
-              })
-        ]);
+                    // imagePicker
+                    //     .pickImage(source: ImageSource.gallery)
+                    //     .then((value) {
+                    //   if (value != null) {
+                    //     pickedImage.value = [value];
+                    //   }
+                    // });
+                  })
+            ]);
       },
       child: builder != null
           ? builder!(pickedImage, isMultipleImage)

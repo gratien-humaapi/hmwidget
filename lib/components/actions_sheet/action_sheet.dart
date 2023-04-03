@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class ActionSheetItem {
   const ActionSheetItem(
@@ -15,6 +18,8 @@ Future<dynamic> showActionSheet(
     bool hasCancelButton = true}) {
   // print(actions);
   return showCupertinoModalPopup(
+      barrierColor: Color(0xFFE0E0E0).withOpacity(0.3),
+      filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
       context: context,
       builder: (BuildContext context) {
         return CupertinoActionSheet(
@@ -42,7 +47,10 @@ Future<dynamic> showActionSheet(
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: const Text('Cancel'),
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(color: Colors.black),
+                    ),
                   )
               : null,
         );
