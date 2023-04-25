@@ -18,8 +18,8 @@ Future<dynamic> showActionSheet(
     bool hasCancelButton = true}) {
   // print(actions);
   return showCupertinoModalPopup(
-      barrierColor: Color(0xFFE0E0E0).withOpacity(0.3),
-      filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+      barrierColor: const Color(0xFFE0E0E0).withOpacity(0.5),
+      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
       context: context,
       builder: (BuildContext context) {
         return CupertinoActionSheet(
@@ -33,7 +33,7 @@ Future<dynamic> showActionSheet(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      action.icon ?? SizedBox(),
+                      action.icon ?? const SizedBox(),
                       const SizedBox(width: 20),
                       action.title,
                     ],
@@ -47,7 +47,7 @@ Future<dynamic> showActionSheet(
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: Text(
+                    child: const Text(
                       'Cancel',
                       style: TextStyle(color: Colors.black),
                     ),

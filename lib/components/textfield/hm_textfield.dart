@@ -21,7 +21,7 @@ class HMTextField extends HookWidget {
     this.hidePasswordIcon,
     this.focusNode,
     this.iconColor,
-    this.disableColor,
+    this.disabledColor,
     this.maxLength,
     this.textFieldType,
     this.textInputAction,
@@ -37,6 +37,7 @@ class HMTextField extends HookWidget {
     this.prefixIcon,
     this.contentPadding,
     this.borderColor,
+    this.disabledTextColor,
     this.fillColor,
     this.variant,
     this.size,
@@ -57,7 +58,8 @@ class HMTextField extends HookWidget {
   final Color? fillColor;
   final Color? borderColor;
   final Color? iconColor;
-  final Color? disableColor;
+  final Color? disabledColor;
+  final Color? disabledTextColor;
   final List<TextInputFormatter>? inputFormatters;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
@@ -103,6 +105,8 @@ class HMTextField extends HookWidget {
     required Color fieldIconColor,
     required HMTextFieldTheme? textFieldTheme,
     required EdgeInsets padding,
+    required Color disableColor,
+    required Color disableTextColor,
   }) {
     return Container(
       padding: padding,
@@ -110,7 +114,7 @@ class HMTextField extends HookWidget {
       constraints: BoxConstraints(minHeight: fieldSize.value),
       decoration: BoxDecoration(
         color: disabled
-            ? disableColor ?? const Color(0x16000000)
+            ? disableColor
             : fieldVariant == HMTextVariant.filled
                 ? background
                 : null,
@@ -130,6 +134,7 @@ class HMTextField extends HookWidget {
             fieldSize,
             fieldVariant,
             fieldRadius,
+            disableTextColor: disableTextColor,
             fieldIconColor,
             background,
             textFieldTheme),
@@ -142,6 +147,11 @@ class HMTextField extends HookWidget {
     final textFieldTheme = Theme.of(context).extension<HMTextFieldTheme>();
     final background =
         fillColor ?? textFieldTheme?.fillColor ?? const Color(0xFFEEEEF0);
+    final disableColor = disabledColor ??
+        textFieldTheme?.disabledColor ??
+        const Color(0x16000000);
+    final disableTextColor =
+        disabledTextColor ?? textFieldTheme?.disabledTextColor ?? Colors.grey;
     final fieldRadius = radius ?? textFieldTheme?.radius ?? HMRadius.md;
     final fieldSize = size ?? textFieldTheme?.size ?? HMTextFieldSize.md;
     final padding = contentPadding ??
@@ -171,6 +181,8 @@ class HMTextField extends HookWidget {
           background: background,
           padding: padding,
           fieldRadius: fieldRadius,
+          disableColor: disableColor,
+          disableTextColor: disableTextColor,
           fieldSize: fieldSize,
           fieldVariant: fieldVariant,
           fieldIconColor: fieldIconColor,
@@ -202,7 +214,8 @@ class HMTextField extends HookWidget {
       HMRadius fieldRadius,
       Color fieldIconColor,
       Color background,
-      HMTextFieldTheme? textFieldTheme) {
+      HMTextFieldTheme? textFieldTheme,
+      {required Color disableTextColor}) {
     final textSize = _getTextSize(fieldSize);
     final showPassword = useState(false);
     switch (type) {
@@ -222,7 +235,10 @@ class HMTextField extends HookWidget {
                   textInputAction: textInputAction,
                   controller: controller,
                   focusNode: focusNode,
-                  style: TextStyle(fontSize: textSize, height: 1.5),
+                  style: TextStyle(
+                    color: disabled ? disableTextColor : null,
+                    fontSize: textSize,
+                  ),
                   textCapitalization: TextCapitalization.sentences,
                   autocorrect: !(keyboardType == TextInputType.emailAddress),
                   maxLength: maxLength,
@@ -265,7 +281,10 @@ class HMTextField extends HookWidget {
                 child: TextField(
                   keyboardType: TextInputType.visiblePassword,
                   controller: controller,
-                  style: TextStyle(fontSize: textSize, height: 1.5),
+                  style: TextStyle(
+                    color: disabled ? disableTextColor : null,
+                    fontSize: textSize,
+                  ),
                   obscureText: !showPassword.value,
                   textInputAction: textInputAction,
                   autocorrect: false,
@@ -325,7 +344,10 @@ class HMTextField extends HookWidget {
               Expanded(
                 child: TextField(
                   controller: controller,
-                  style: TextStyle(fontSize: textSize, height: 1.5),
+                  style: TextStyle(
+                    color: disabled ? disableTextColor : null,
+                    fontSize: textSize,
+                  ),
                   textInputAction: textInputAction,
                   keyboardType: TextInputType.number,
                   autocorrect: false,
@@ -373,7 +395,10 @@ class HMTextField extends HookWidget {
                   padding: const EdgeInsets.only(top: 8.0),
                   child: TextField(
                     controller: controller,
-                    style: TextStyle(fontSize: textSize, height: 1.5),
+                    style: TextStyle(
+                      color: disabled ? disableTextColor : null,
+                      fontSize: textSize,
+                    ),
                     keyboardType: TextInputType.multiline,
                     textCapitalization: TextCapitalization.sentences,
                     // textInputAction: textInputAction,

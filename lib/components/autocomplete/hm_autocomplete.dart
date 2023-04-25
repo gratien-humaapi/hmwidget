@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hmwidget/utils/constant.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 import '../../size/hm_autocomplete_size.dart';
@@ -19,6 +18,9 @@ class HMAutocomplete extends HookWidget {
     this.fieldViewBuilder,
     this.fillColor,
     this.initialValue,
+    this.modalRadius,
+    this.optionsPaddding,
+    this.selectedIcon,
     required this.onSelected,
     this.hintText,
     this.selectPanelDecoration,
@@ -26,6 +28,7 @@ class HMAutocomplete extends HookWidget {
     this.selectedValueTextStyle,
     this.radius,
     this.size,
+    this.optionsTextStyle,
   });
   final bool disabled;
   final HMAutocompleteSize? size;
@@ -36,12 +39,16 @@ class HMAutocomplete extends HookWidget {
   final BoxDecoration? selectPanelDecoration;
   final TextStyle? selectedValueTextStyle;
   final Color? fillColor;
+  final double? modalRadius;
+  final Widget? selectedIcon;
+  final TextStyle? optionsTextStyle;
+  final EdgeInsets? optionsPaddding;
   final Color? selectedBgColor;
   final List<String> Function(String value) optionsBuilder;
   final Widget Function(BuildContext, void Function(String), List<String>)?
       optionsViewBuilder;
-  final Widget Function(BuildContext, TextEditingController, bool)?
-      fieldViewBuilder;
+  final Widget Function(BuildContext, TextEditingController, bool,
+      void Function(String value))? fieldViewBuilder;
   final void Function(String) onSelected;
   final String? hintText;
 
@@ -83,10 +90,16 @@ class HMAutocomplete extends HookWidget {
     return AbsorbPointer(
       absorbing: disabled,
       child: DetailsPage(
+        radius: modalRadius,
         destinationPage: _SelectPannel(
             initialValue: initialValue ?? '',
             selectedBgColor: activeOptionColor,
             onSelected: onSelected,
+            fieldViewBuilder: fieldViewBuilder,
+            optionsPaddding: optionsPaddding,
+            optionsViewBuilder: optionsViewBuilder,
+            optionsTextStyle: optionsTextStyle,
+            selectedIcon: selectedIcon,
             radius: boxRadius.value,
             optionsBuilder: optionsBuilder),
         isModal: isModalView,
@@ -101,17 +114,25 @@ class HMAutocomplete extends HookWidget {
           child: Row(
             children: [
               Expanded(
-                  child: hasValue
-                      ? Text(
-                          '$initialValue',
-                          style: selectedValueTextStyle,
-                        )
-                      : Text(
-                          hintText ?? '',
-                          style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: _getTextSize(autocompleteSize)),
-                        )),
+                  child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: hasValue
+                    ? Text(
+                        '$initialValue',
+                        overflow: TextOverflow.ellipsis,
+                        style: selectedValueTextStyle ??
+                            TextStyle(
+                                fontSize: _getTextSize(autocompleteSize),
+                                height: 1.5),
+                      )
+                    : Text(
+                        hintText ?? '',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: _getTextSize(autocompleteSize)),
+                      ),
+              )),
               if (hasValue)
                 Container(
                   decoration: BoxDecoration(
@@ -140,48 +161,68 @@ class HMAutocomplete extends HookWidget {
 
 class _SelectPannel extends HookWidget {
   const _SelectPannel({
-    super.key,
     required this.initialValue,
     required this.optionsBuilder,
     this.selectedBgColor,
+    this.optionsTextStyle,
     this.radius,
+    this.selectedIcon,
     this.optionsViewBuilder,
     this.fieldViewBuilder,
+    this.optionsPaddding,
     required this.onSelected,
   });
   final List<String> Function(String value) optionsBuilder;
   final Color? selectedBgColor;
   final String initialValue;
+  final Widget? selectedIcon;
+  final TextStyle? optionsTextStyle;
   final double? radius;
   final Widget Function(BuildContext context, void Function(String) onSelected,
       List<String> options)? optionsViewBuilder;
-  final Widget Function(BuildContext, TextEditingController, bool)?
-      fieldViewBuilder;
+  final Widget Function(BuildContext, TextEditingController, bool,
+      void Function(String value))? fieldViewBuilder;
   final void Function(String) onSelected;
+  final EdgeInsets? optionsPaddding;
 
   @override
   Widget build(BuildContext context) {
-    final ValueNotifier<List<String>> list = useState([]);
-    final ValueNotifier<bool> showClearButton = useState(false);
-    final controller = useState(TextEditingController(text: initialValue));
+    final list = useState([]);
+    final showClearButton = useState(false);
+    final controller = useTextEditingController(text: initialValue);
     // Call when value change
-    void _onChangedField() {
-      final List<String> options = optionsBuilder(
-        controller.value.text,
-      );
+    void _onChangedField(String value) {
+      showClearButton.value = value.isNotEmpty;
+      final List<String> options = optionsBuilder(value
+          // controller.text,
+          );
+      // print(options);
       list.value = options;
       print(list.value);
     }
 
-    controller.value.addListener(() {
-      showClearButton.value = controller.value.text.isNotEmpty;
-      print(showClearButton.value);
-      // if (controller.value.text != value.value) value.value = "";
-      _onChangedField();
-    });
+    useEffect(() {
+      // showClearButton.value = controller.text.isNotEmpty;
+      // print('showCloseButton ${showClearButton.value}');
+      _onChangedField(initialValue);
+      return null;
+    }, []);
+
+    // controller.value.addListener(() {
+    //   showClearButton.value = controller.value.text.isNotEmpty;
+    //   print(showClearButton.value);
+    //   // if (controller.value.text != value.value) value.value = "";
+    //   _onChangedField();
+    // });
+
+    // _onChangedField(initialValue);
+
     return Column(
       children: <Widget>[
-        if (fieldViewBuilder == null)
+        if (fieldViewBuilder != null)
+          fieldViewBuilder!(
+              context, controller, showClearButton.value, _onChangedField)
+        else
           AppBar(
             automaticallyImplyLeading: false,
             backgroundColor: Colors.transparent,
@@ -207,8 +248,9 @@ class _SelectPannel extends HookWidget {
                   ),
                   Expanded(
                     child: TextField(
-                      controller: controller.value,
-                      autofocus: true,
+                      controller: controller,
+                      // autofocus: true,
+                      // focusNode: myFocusNode,
                       textInputAction: TextInputAction.search,
                       style: const TextStyle(fontSize: 16, height: 1.5),
                       decoration: const InputDecoration(
@@ -219,6 +261,7 @@ class _SelectPannel extends HookWidget {
                             EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                       ),
                       onChanged: (value) {
+                        _onChangedField(value);
                         // _onChangedField(
                         //   value,
                         // );
@@ -234,21 +277,21 @@ class _SelectPannel extends HookWidget {
                           color: Colors.black,
                         ),
                         onTap: () {
-                          controller.value.clear();
+                          controller.clear();
+                          _onChangedField('');
                         },
                       ),
                     )
                 ],
               ),
             ),
-          )
-        else
-          fieldViewBuilder!(context, controller.value, showClearButton.value),
+          ),
+
         // if (controller.value.text.isEmpty && showClearButton.value)
         //   Container()
         // else
         if (optionsViewBuilder != null)
-          optionsViewBuilder!(context, onSelected, list.value)
+          optionsViewBuilder!(context, onSelected, list.value as List<String>)
         else
           Expanded(
             child: Align(
@@ -256,26 +299,28 @@ class _SelectPannel extends HookWidget {
               child: ListView.builder(
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
-                padding: const EdgeInsets.only(bottom: 20),
+                padding: optionsPaddding ??
+                    const EdgeInsets.only(bottom: 20, left: 15, right: 15),
                 controller: ScrollController(),
                 physics: const BouncingScrollPhysics(),
                 // shrinkWrap: true,
                 itemCount: list.value.length,
                 itemBuilder: (BuildContext context, int index) {
-                  final option = list.value.elementAt(index);
+                  final option = list.value.elementAt(index) as String;
                   return GestureDetector(
                     onTap: () {
                       // value = option;
-                      Navigator.pop(context);
-                      controller.value.clear();
-
                       onSelected(option);
+                      controller.clear();
+                      Navigator.pop(context);
                     },
-                    child: Container(
-                      // width: double.infinity,
-                      // color: index == 0 ? selectedBgColor : null,
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text('$option'),
+                    child: ListTile(
+                      dense: true,
+                      title: Text(
+                        option,
+                        overflow: TextOverflow.ellipsis,
+                        style: optionsTextStyle,
+                      ),
                     ),
                   );
                 },

@@ -12,69 +12,80 @@ class HMImagePicker extends HookWidget {
   const HMImagePicker(
       {this.isMultipleImage = false,
       this.hasCancelButton = true,
+      this.imageSourceList,
       this.builder,
+      this.initialValues,
       required this.onImageSelected,
       super.key});
   final bool isMultipleImage;
   final bool hasCancelButton;
+  final List<XFile>? initialValues;
+  final List<ActionSheetItem> Function(
+      bool isMultipleImage,
+      ValueNotifier<List<XFile>> pickedImage,
+      void Function() pickMultiImage,
+      void Function(ImageSource source) pickSingleImage)? imageSourceList;
   final ValueChanged<List<XFile>> onImageSelected;
   final Widget Function(ValueNotifier<List<XFile>> images, bool isMutipleImage)?
       builder;
   @override
   Widget build(BuildContext context) {
-    final pickedImage = useState(<XFile>[]);
+    final pickedImage = useState(initialValues ?? <XFile>[]);
     final ImagePicker imagePicker = ImagePicker();
     pickedImage.addListener(() {
       onImageSelected(pickedImage.value);
     });
+    void pickMultiImage() {
+      imagePicker.pickMultiImage().then((value) {
+        if (value != null) {
+          pickedImage.value = value;
+        }
+      });
+    }
+
+    void pickSingleImage(ImageSource source) {
+      imagePicker.pickImage(source: source).then((value) {
+        if (value != null) {
+          pickedImage.value = [value];
+        }
+      });
+    }
+
     return GestureDetector(
       onTap: () {
         showActionSheet(
             context: context,
             hasCancelButton: hasCancelButton,
-            actions: [
-              ActionSheetItem(
-                  title: const Text('Camera',
-                      style: TextStyle(color: Colors.black)),
-                  icon: const Icon(Icons.camera_alt_rounded),
-                  onPressed: () {
-                    imagePicker
-                        .pickImage(source: ImageSource.camera)
-                        .then((value) {
-                      if (value != null) {
-                        pickedImage.value = [value];
-                      }
-                    });
-                  }),
-              ActionSheetItem(
-                  title: const Text('Gallery',
-                      style: TextStyle(color: Colors.black)),
-                  icon: const Icon(Icons.photo),
-                  onPressed: () {
-                    if (isMultipleImage) {
-                      imagePicker.pickMultiImage().then((value) {
-                        if (value != null) {
-                          pickedImage.value = value;
-                        }
-                      });
-                    } else {
-                      imagePicker
-                          .pickImage(source: ImageSource.gallery)
-                          .then((value) {
-                        if (value != null) {
-                          pickedImage.value = [value];
-                        }
-                      });
-                    }
-                    // imagePicker
-                    //     .pickImage(source: ImageSource.gallery)
-                    //     .then((value) {
-                    //   if (value != null) {
-                    //     pickedImage.value = [value];
-                    //   }
-                    // });
-                  })
-            ]);
+            actions: imageSourceList != null
+                ? imageSourceList!(isMultipleImage, pickedImage, pickMultiImage,
+                    pickSingleImage)
+                : [
+                    ActionSheetItem(
+                        title: const Text('Camera',
+                            style: TextStyle(color: Colors.black)),
+                        icon: const Icon(Icons.camera_alt_rounded),
+                        onPressed: () {
+                          pickSingleImage(ImageSource.camera);
+                        }),
+                    ActionSheetItem(
+                        title: const Text('Gallery',
+                            style: TextStyle(color: Colors.black)),
+                        icon: const Icon(Icons.photo),
+                        onPressed: () {
+                          if (isMultipleImage) {
+                            pickMultiImage();
+                          } else {
+                            pickSingleImage(ImageSource.gallery);
+                          }
+                          // imagePicker
+                          //     .pickImage(source: ImageSource.gallery)
+                          //     .then((value) {
+                          //   if (value != null) {
+                          //     pickedImage.value = [value];
+                          //   }
+                          // });
+                        })
+                  ]);
       },
       child: builder != null
           ? builder!(pickedImage, isMultipleImage)
@@ -85,7 +96,7 @@ class HMImagePicker extends HookWidget {
   Widget _defaultBuilder(ValueNotifier<List<XFile>> pickedImage) {
     if (pickedImage.value.isEmpty) {
       return CustomPaint(
-        foregroundPainter: DashedPainter(),
+        foregroundPainter: _DashedPainter(),
         child: Container(
             height: 100,
             width: 150,
@@ -165,8 +176,8 @@ class HMImagePicker extends HookWidget {
   }
 }
 
-class DashedPainter extends CustomPainter {
-  DashedPainter();
+class _DashedPainter extends CustomPainter {
+  _DashedPainter();
 
   final Paint _paint = Paint()
     ..color = Colors.grey
@@ -205,5 +216,5 @@ class DashedPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(DashedPainter oldDelegate) => false;
+  bool shouldRepaint(_DashedPainter oldDelegate) => false;
 }

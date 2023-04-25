@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
@@ -8,7 +11,8 @@ class DetailsPage<T> extends HookWidget {
       // required this.onChange,
       // required this.onTap,
       this.onClose,
-      // required this.defaultValue,
+      this.overlayColor,
+      this.radius,
       required this.destinationPage,
       required this.isModal});
   final Widget child;
@@ -17,6 +21,8 @@ class DetailsPage<T> extends HookWidget {
   // final void Function(T value) onTap;
   final void Function()? onClose;
   final bool isModal;
+  final Color? overlayColor;
+  final double? radius;
   final Widget destinationPage;
 
   Future<void> buildPage(BuildContext context) async {
@@ -38,26 +44,42 @@ class DetailsPage<T> extends HookWidget {
   }
 
   Future<void> buildmodal(BuildContext context) async {
-    await showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        useRootNavigator: true,
-        isDismissible: true,
-        // backgroundColor: Colors.yellow.shade200,
-        elevation: 0.0,
-        enableDrag: true,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
-        ),
-        builder: (BuildContext context) {
-          return GestureDetector(
-            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-            child: FractionallySizedBox(
-              heightFactor: 0.9,
-              child: destinationPage,
+    await showCupertinoModalPopup(
+      barrierColor: overlayColor ?? const Color(0xFFE0E0E0).withOpacity(0.3),
+      context: context,
+      filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+      // isScrollControlled: true,
+      useRootNavigator: true,
+      barrierDismissible: true,
+      semanticsDismissible: true,
+      // backgroundColor: Colors.yellow.shade200,
+      // elevation: 0.0,
+      // enableDrag: true,
+
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          heightFactor: 0.9,
+          child: Dismissible(
+            key: const Key('dismiss_modal_key'),
+            direction: DismissDirection
+                .down, // autoriser le défilement vers le bas pour fermer le popup
+            onDismissed: (DismissDirection direction) {
+              Navigator.pop(context);
+            },
+            child: Material(
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.vertical(top: Radius.circular(radius ?? 8)),
+              ),
+              child: GestureDetector(
+                onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+                child: destinationPage,
+              ),
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
     if (onClose != null) {
       onClose!();
     }

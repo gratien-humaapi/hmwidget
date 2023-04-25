@@ -76,7 +76,7 @@ class HMSlider extends HookWidget {
     final sliderOrientation =
         orientation ?? sliderTheme?.orientation ?? HMOrientation.horizontal;
 
-    SliderThemeData sliderThemeData = SliderThemeData(
+    final SliderThemeData sliderThemeData = SliderThemeData(
       trackHeight: sliderSize.value / 2,
       trackShape: SliderTrack(radius: sliderRadius.value),
       activeTrackColor:
@@ -133,7 +133,7 @@ class HMSlider extends HookWidget {
 
   Widget getSimpleSlider(ValueNotifier<num> sValue,
       SliderThemeData sliderThemeData, double sliderSize) {
-    double maxValue = max ?? 100;
+    final double maxValue = max ?? 100;
     return Container(
       height: sliderSize + 5,
       margin: const EdgeInsets.symmetric(horizontal: 10),

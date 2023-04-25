@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-import 'custom_indicator.dart';
 import 'scrollcontroller_provider.dart';
 
 class HMBottomNavBar extends HookWidget {
@@ -132,14 +130,16 @@ class HMBottomNavBar extends HookWidget {
       onNotification: (scrollNotification) {
         if (scrollNotification is ScrollUpdateNotification) {
           // Check the direction of the scroll
-          if (scrollNotification.scrollDelta! < 0) {
+          if (scrollNotification.scrollDelta! < 0 &&
+              scrollNotification.metrics.axis == Axis.vertical) {
             // User is scrolling down
-            print("scrolling down...");
+            print('scrolling down...');
             isScrollingDown.value = false;
             showBottomBar(controller);
-          } else if (scrollNotification.scrollDelta! > 0) {
+          } else if (scrollNotification.scrollDelta! > 0 &&
+              scrollNotification.metrics.axis == Axis.vertical) {
             // User is scrolling up
-            print("scrolling up...");
+            print('scrolling up...');
             isScrollingDown.value = true;
             hideBottomBar(controller);
           }

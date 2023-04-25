@@ -138,7 +138,7 @@ class FilesPage extends HookWidget {
 
   Widget buildFile(int index, ValueNotifier<List<PlatformFile>> listFiles,
       ValueNotifier<List> selectedList, ValueNotifier<bool> isSelecting) {
-    PlatformFile file = listFiles.value[index];
+    final PlatformFile file = listFiles.value[index];
     final kb = file.size / 1024;
     final mb = kb / 1024;
     final fileSize =

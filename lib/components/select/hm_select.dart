@@ -14,15 +14,20 @@ class HMSelect extends HookWidget {
     this.hidden = false,
     required this.value,
     this.radius,
-    this.selectIcon,
+    this.selectedItemIcon,
+    this.rightIcon,
     this.isModalView = true,
+    this.hasDivider = true,
+    this.overlayColor,
     required this.selectList,
     this.selectedValueTextStyle,
     this.size,
-    this.selectItemStyle,
+    this.selectedItemStyle,
     required this.selectionPageTitle,
     this.selectIconColor,
     this.selectedBgColor,
+    this.modalRadius,
+    this.closeIcon,
     this.hintText,
     this.selectPanelDecoration,
     this.selectIconAtLeft,
@@ -35,14 +40,19 @@ class HMSelect extends HookWidget {
   final HMSelectSize? size;
   final String? hintText;
   final HMRadius? radius;
-  final Widget? selectIcon;
-  final TextStyle? selectItemStyle;
+  final Widget? selectedItemIcon;
+  final TextStyle? selectedItemStyle;
   final BoxDecoration? selectPanelDecoration;
   final TextStyle? selectedValueTextStyle;
   final bool isModalView;
+  final bool hasDivider;
+  final Widget? closeIcon;
   final Color? selectIconColor;
+  final Color? overlayColor;
+  final double? modalRadius;
   final Color? selectedBgColor;
   final Widget selectionPageTitle;
+  final Widget? rightIcon;
   final dynamic value;
   final List selectList;
 
@@ -77,41 +87,76 @@ class HMSelect extends HookWidget {
     required HMRadius selectBoxRadius,
     required Color selectColor,
     required bool iconAtLeft,
+    Widget? closeIcon,
+    required bool isModal,
+    required BuildContext context,
   }) {
     return Column(
       children: [
-        selectionPageTitle,
-        Divider(color: outlineColor, height: 1),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+          child: Row(
+            children: [
+              Expanded(child: Center(child: selectionPageTitle)),
+              if (isModalView)
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: closeIcon ??
+                      Container(
+                        padding: const EdgeInsets.all(5.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius:
+                              BorderRadius.circular(selectBoxRadius.value),
+                        ),
+                        child: Icon(
+                          Icons.close_rounded,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                ),
+            ],
+          ),
+        ),
+        if (hasDivider)
+          Divider(color: outlineColor.withOpacity(0.5), height: 1),
         Container(
           child: ListView.builder(
             padding: EdgeInsets.zero,
-            physics: const NeverScrollableScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
+            // controller: scrollController,
             itemCount: selectList.length,
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int index) {
               final bool isSelected = value == selectList[index];
               final List<Widget> children = [
-                Padding(
-                  padding: EdgeInsets.only(left: iconAtLeft ? 0.0 : 20),
-                  child: Text(
-                    '${selectList[index]}',
-                    style: selectItemStyle ??
-                        TextStyle(
-                          fontSize: _getTextSize(selectSize),
-                        ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: iconAtLeft ? 0.0 : 20),
+                      child: Text(
+                        '${selectList[index]}',
+                        overflow: TextOverflow.ellipsis,
+                        style: selectedItemStyle ??
+                            TextStyle(
+                              // color: isSelected ? selectColor,
+                              fontSize: _getTextSize(selectSize),
+                            ),
+                      ),
+                    ),
                   ),
                 ),
-                SizedBox(
-                  width: 50.0,
-                  child: isSelected
-                      ? selectIcon ??
-                          Icon(
-                            Icons.check,
-                            color: disabled ? Colors.grey : selectColor,
-                            size: _getTextSize(selectSize) * 1.3,
-                          )
-                      : Container(),
-                ),
+                if (isSelected)
+                  SizedBox(
+                    width: 50.0,
+                    child: selectedItemIcon ??
+                        Icon(
+                          Icons.check,
+                          color: disabled ? Colors.grey : selectColor,
+                          size: _getTextSize(selectSize) * 1.3,
+                        ),
+                  ),
               ];
               return GestureDetector(
                 onTap: () {
@@ -125,7 +170,9 @@ class HMSelect extends HookWidget {
                   height: _getTextSize(selectSize) * 3,
                   // padding: const EdgeInsets.only(left: 20.0),
                   decoration: BoxDecoration(
-                      color: isSelected ? Colors.grey.shade200 : null),
+                      color: isSelected
+                          ? selectedBgColor ?? Colors.grey.shade200
+                          : null),
                   child: Row(
                     mainAxisAlignment: iconAtLeft
                         ? MainAxisAlignment.start
@@ -157,16 +204,22 @@ class HMSelect extends HookWidget {
     return AbsorbPointer(
       absorbing: disabled,
       child: DetailsPage(
+        radius: modalRadius,
+        overlayColor: overlayColor ?? selectTheme?.overlayColor,
         destinationPage: _styledSelectPannel(
           selectSize: selectSize,
           selectBoxRadius: selectBoxRadius,
+          context: context,
           selectColor: selectColor,
+          closeIcon: closeIcon,
+          isModal: isModalView,
           iconAtLeft: iconAtLeft,
         ).parent(({required child}) => _styledBox(
               child: child,
             )),
         isModal: isModalView,
         child: Container(
+          // padding: const EdgeInsets.only(right: 12),
           decoration: selectPanelDecoration ??
               BoxDecoration(
                   color: selectedBgColor ?? Colors.grey.shade200,
@@ -175,24 +228,36 @@ class HMSelect extends HookWidget {
           child: Row(
             children: [
               Expanded(
-                  child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: value.toString().isEmpty
-                    ? Text(
-                        '$hintText',
-                        style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: _getTextSize(selectSize)),
-                      )
-                    : Text(
-                        '$value',
-                        style: selectedValueTextStyle,
-                      ),
-              )),
-              Icon(
-                Icons.arrow_drop_down_rounded,
-                size: selectSize.value,
-                color: Colors.grey.shade600,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: value.toString().isEmpty
+                        ? Text(
+                            '$hintText',
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: _getTextSize(selectSize)),
+                          )
+                        : Text(
+                            '$value',
+                            style: selectedValueTextStyle ??
+                                TextStyle(
+                                    fontSize: _getTextSize(selectSize),
+                                    height: 1.5),
+                          ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 12.0),
+                child: rightIcon ??
+                    selectTheme?.inputIcon ??
+                    Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      size: selectSize.value * 0.8,
+                      color: Colors.grey.shade500,
+                    ),
               ),
             ],
           ),

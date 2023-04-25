@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hmwidget/hmwidget.dart';
-import 'package:hmwidget/widget_theme.dart';
 // import 'package:hmwidget/hmwidget.dart';
 
 void main() {
@@ -120,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
               },
             ),
-            SizedBox(height: 50),
+            const SizedBox(height: 50),
             HMIconButton(
                 icon: const Icon(Icons.edit_calendar_sharp), onPressed: () {}),
             SizedBox(
@@ -172,19 +171,23 @@ class _MyHomePageState extends State<MyHomePage> {
                   });
                 }),
             HMSelectBadge(
-                // disabled: true,
-                selectedList: choix
-                    .map((element) => HMSelectedItem(
-                        avatar: Text(element.toString()[0]),
-                        value: element.toString(),
-                        label: Text(element.toString())))
-                    .toList(),
-                radius: HMRadius.md,
-                onDeleted: (deletedValue) {
-                  setState(() {
-                    choix.remove(deletedValue);
-                  });
-                }),
+              selectedList: choix
+                  .map((element) => HMSelectedItem(
+                      avatar: Text(element.toString()[0]),
+                      value: element.toString(),
+                      label: Text(element.toString())))
+                  .toList(),
+              radius: HMRadius.md,
+              onDeleted: (deletedValue) {
+                setState(() {
+                  choix.remove(deletedValue);
+                });
+              },
+              direction: Axis.vertical,
+              onTap: (index) {
+                print(index);
+              },
+            ),
 
             HMMultiSelect(
               selectionPageTitle: const Align(
@@ -210,6 +213,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
               },
               selectedValues: choix,
+              onSelectedValuePressed: (int index) {
+                print(index);
+              },
             ),
 
             HMChoiceChips(
