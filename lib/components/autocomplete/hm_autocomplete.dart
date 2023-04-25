@@ -198,7 +198,7 @@ class _SelectPannel extends HookWidget {
           );
       // print(options);
       list.value = options;
-      print(list.value);
+      // print(list.value);
     }
 
     useEffect(() {

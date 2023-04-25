@@ -1,16 +1,18 @@
-
 # HM Widget
 
 Easy to use open source UI library with Widgets to build flutter app.
 
-## Installation 
+## Installation
 
 1. Add the latest version of package to your pubspec.yaml (and run`flutter pub get`):
+
 ```yaml
 dependencies:
-  hmwidget: ^0.0.1
+  hmwidget: ^0.0.3
 ```
+
 2. Import the package and use it in your Flutter App.
+
 ```dart
 import 'package:hmwidget/hmwidget.dart';
 ```
@@ -33,13 +35,15 @@ There are a number of widget that you can customize:
 ### Example
 
 <?code-excerpt "basic.dart (basic-example)"?>
-``` dart
+
+```dart
 import 'package:flutter/material.dart';
 import 'package:hmwidget/hmwidget.dart';
 void main() => runApp(
       const MaterialApp(
         home: Material(
-          child: Center(
+          child:Scaffold(
+            body: Center(
             child: HMButton(
                   onPressed: () => print("Pressed"),
                   buttonVariant: HMButtonVariant.outlined,
@@ -49,9 +53,8 @@ void main() => runApp(
           ),
         ),
       ),
+      ),
     );
-}
 ```
 
 See the example app for more complex examples.
-

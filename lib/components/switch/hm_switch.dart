@@ -235,7 +235,7 @@ class HMSwitch extends HookWidget {
         onTap: () {
           if (value) {
             onChange(!value);
-            print('here ${!value}');
+            // print('here ${!value}');
             animationController.forward();
           } else {
             onChange(!value);
